@@ -1,0 +1,7 @@
+build/
+*.pdf
+*.sublime-project
+*.sublime-workspace
+.RData
+.Rhistory
+
