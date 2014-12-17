@@ -13,28 +13,20 @@ TEX2PDF_OPTS=-file-line-error -output-directory $(OUTDIR)
 $(OUTDIR)/%.aux: %.tex
 	$(TEX2PDF) $(TEX2PDF_OPTS) $<
 
-report.pdf: images/BGR_means_plots.pdf images/PCA_genus_plot.pdf \
-	images/PCA_Paph_sect_plot.pdf images/PCA_Paph_parv_spp_plot.pdf \
-	images/Meta_database_diagram.pdf
+images/%_pca_plot.pdf: data/%.tsv
+	Rscript make-plots.r $< $@
+
+report.pdf: images/BGR_means_plots.pdf images/genus_pca_plot.pdf \
+			images/Cypripedium.section_pca_plot.pdf \
+			images/Paphiopedilum.section_pca_plot.pdf \
+			images/Paphiopedilum.Parvisepalum.species_pca_plot.pdf \
+			images/Meta_database_diagram.pdf
 
 images/BGR_means_plots.pdf: data/bgr-means.tsv
-	Rscript make-plots.r bgr_means $< $@
+	Rscript make-plots.r $< $@
 
 data/bgr-means.tsv: images/grabcut_output.png
 	python bgr-means.py $< > $@
-
-images/PCA_genus_plot.pdf: data/genus.tsv
-	Rscript make-plots.r pca_genus $< $@
-
-images/PCA_Paph_sect_plot.pdf: data/Paphiopedilum.section.tsv
-	Rscript make-plots.r pca_paph_sect $< $@
-
-images/PCA_Paph_parv_spp_plot.pdf: data/Paphiopedilum.Parvisepalum.species.tsv
-	Rscript make-plots.r pca_paph_parv_spp $< $@
-
-images/PCA_plots.pdf: data/genus.tsv data/Paphiopedilum.section.tsv \
-	data/Paphiopedilum.Parvisepalum.species.tsv
-	Rscript make-plots.r pca_all $^ $@
 
 images/Meta_database_diagram.pdf: data/meta.db
 	java -classpath schemacrawler/lib/*:. schemacrawler.tools.sqlite.Main \

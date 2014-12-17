@@ -145,6 +145,10 @@ artificial neural networks \sep slipper orchids
 
 A collection of reference photos was compiled by searching the internet for images, mostly through Google Image searches. The correct genus, section, and species for each image was verified through literary research \citep{Cribb1998, Pridgeon1999, Frosch2012} and phylogenetic reconstructions based on molecular analyses \citep{Li2011, Chochai2012}. Every photo was subsequently uploaded to an account on the online image hosting service Flickr (\url{https://www.flickr.com}). On Flickr, each image was annotated with standardized tags in the formats \texttt{genus:name}, \texttt{section:name}, and \texttt{species:name}, where ``name'' is the taxonomic name for the corresponding taxonomic rank. A custom Python script utilizing the Flickr API was used to download the entire image collection with metadata from the Flickr account to a local computer, where images are stored in a directory hierarchy and image annotations are stored in a database (\ref{sect:meta-database}).
 
+\subsection{Image feature extraction}
+
+Several image feature extraction methods were implemented and released in the form of a Python package called ImgPheno (\url{https://github.com/naturalis/imgpheno}). This Python package depends on OpenCV (\url{http://opencv.org/}) for computer vision functionality and NumPy (\url{http://www.numpy.org/}) for array and matrix manipulation functionalities. It implements colour image enhancement methods developed by \citet{Naik2003}.
+
 \subsection{Cross-validation}
 
 Stratified k-folds cross-validation was performed to estimate the accuracy of the classifiers. Species names were used to set the classes for the cross-validations. In order to include all species, the number of folds was set to 4 (k=4). Cross-validation was also performed with 10 folds, only including the species represented by at least k=10 photos.
@@ -178,7 +182,7 @@ In total 1127 photos of 115 species were collected (table~\ref{tbl:photo-counts}
 
 \subsection{Image feature extraction}
 
-Different image feature extraction methods were implemented and released in the form of a Python package called ImagePheno (\url{https://github.com/naturalis/imgpheno}). The \verb/color_bgr_means/ method extracts the BGR colour intensities from a region of interest in an image. This feature has a parameter, \verb/bins/, which is used to set the number of horizontal and vertical sections in which to divide the image. The method returns for each section the mean intensity for each of the components of the BGR colour space (blue, green, and red) (figure~\ref{fig:bgr-means-plots}).
+The \verb/color_bgr_means/ method from ImgPheno extracts the BGR colour intensities from a region of interest in an image. This feature has a parameter, \verb/bins/, which is used to set the number of horizontal and vertical sections in which to divide the image. The method returns for each section the mean intensity for each of the components of the BGR colour space (blue, green, and red) (figure~\ref{fig:bgr-means-plots}).
 
 \begin{figure*}[t]
     \centering
@@ -422,12 +426,13 @@ Principal components analysis (PCA) with orthogonal rotation (varimax) was condu
 
 \begin{figure}[!h]
     \minipage{\textwidth}
-        \includegraphics[width=0.5\linewidth]{PCA_genus_plot}
-        \includegraphics[width=0.5\linewidth]{PCA_Paph_sect_plot}
+        \includegraphics[width=0.5\linewidth]{genus_pca_plot}
+        \includegraphics[width=0.5\linewidth]{{{Cypripedium.section_pca_plot}}}
     \endminipage
     \par\vfill
     \minipage{\textwidth}
-        \includegraphics[width=0.5\linewidth]{PCA_Paph_parv_spp_plot}
+        \includegraphics[width=0.5\linewidth]{{{Paphiopedilum.section_pca_plot}}}
+        \includegraphics[width=0.5\linewidth]{{{Paphiopedilum.Parvisepalum.species_pca_plot}}}
     \endminipage
     \caption{Scatter plots for the principal components analyses. The plots are created from training data for 1) genus classification, 2) section classification for the genus Paphiopedilum, and 3) species classification for the section Parvisepalum of genus Paphiopedilum. For all plots the first principal component (PC1) was plotted against the second (PC2).}
     \label{fig:pca-plots}

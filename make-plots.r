@@ -16,7 +16,7 @@ codeword_color <- function(codeword, colors, on=1) {
 	stop(sprintf("Codeword did not contain an on=%s bit", on))
 }
 
-plot_bgr_means <- function(bgr_means_tsv) {
+plot.bgr.means <- function(bgr_means_tsv) {
 	bgr.means = read.delim(bgr_means_tsv)
 	n = nrow(bgr.means)
 	bgr = c("blue","dark green","red")
@@ -68,67 +68,103 @@ plot_pca_single <- function(data_tsv, output.labels, nfactors, exclude=NULL,
 		pt.bg=data.colors, pch=21, inset=.02)
 }
 
-plot_pca_genus <- function(data_tsv) {
+plot_pca_pairs <- function(data_tsv, output.labels, nfactors, exclude=NULL,
+						   components=seq(1,3), legend.pos="topright") {
+	if (length(components) > nfactors) {
+		stop(sprintf("The number of components to plot (%s) cannot be more ",
+			"than the number of factors to extract (%s)",
+			length(components), nfactors))
+	}
+
+	# Read the data file.
+	data = read.delim(data_tsv)
+
+	# Get the column names minus the columns to be excluded.
+	if ( is.null(exclude) ) {
+		cols = names(data)
+	} else {
+		cols = names(data)[-exclude]
+	}
+
+	# Get input and output column names.
+	cols.in = head(cols, -length(output.labels))
+	cols.out = tail(cols, length(output.labels))
+
+	# Set colors for output labels.
+	if ( require('gplots') ) {
+		data.colors = rich.colors(length(cols.out))
+	} else {
+		data.colors = rainbow(length(cols.out))
+	}
+
+	# Add a color column to the data frame.
+	data$col = apply(data[cols.out], 1, codeword_color, data.colors)
+
+	# Principal components analysis.
+	data.pc = principal(data[cols.in], nfactors=nfactors, rotate='varimax')
+
+	# Plot component compare[1] against component compare[2].
+	pairs(data.pc$scores[,components], col=data$col, bg=data$col, pch=21, cex.axis=1.5, cex.main=1.5, upper.panel = NULL)
+	par(xpd=TRUE)
+	legend(legend.pos, legend=output.labels, col=data.colors, pt.bg=data.colors, pch=21, inset=.02, cex=1.5)
+}
+
+plot.pca.genus <- function(data_tsv) {
 	plot_pca_single(data_tsv,
 		output.labels=c("Cypripedium","Mexipedium","Paphiopedilum",
 			"Phragmipedium","Selenipedium"),
 		nfactors=3, exclude=c(1))
 }
 
-plot_pca_paph_sect <- function(data_tsv) {
+plot.pca.Cypripedium.section <- function(data_tsv) {
+	plot_pca_single(data_tsv,
+		output.labels=c("Acaulia","Arietinum","Bifolia","Cypripedium",
+			"Enantiopedilum","Flabellinervia","Macrantha","Obtusipetala",
+			"Sinopedilum","Subtropica","Trigonopedia"),
+		nfactors=8, exclude=c(1), legend.pos="topleft")
+}
+
+plot.pca.Paphiopedilum.section <- function(data_tsv) {
 	plot_pca_single(data_tsv,
 		output.labels=c("Barbata","Brachypetalum","Cochlopetalum",
 			"Coryopedilum","Paphiopedilum","Pardalopetalum","Parvisepalum"),
 		nfactors=6, exclude=c(1))
 }
 
-plot_pca_paph_parv_spp <- function(data_tsv) {
+plot.pca.Paphiopedilum.Parvisepalum.species <- function(data_tsv) {
 	plot_pca_single(data_tsv,
 		output.labels=c("P. armeniacum","P. delenatii","P. emersonii",
 			"P. malipoense","P. micranthum","P. vietnamense"),
 		nfactors=6, exclude=c(1), legend.pos="bottomright")
 }
 
-plot_pca_all <- function(genus_tsv, paph_tsv, parv_spp_tsv) {
-	par(mfrow=c(1,3))
-	plot_pca_genus(genus_tsv)
-	plot_pca_paph_sect(paph_tsv)
-	plot_pca_paph_parv_spp(parv_spp_tsv)
-}
-
 main <- function(args) {
-	if (args[1] == 'bgr_means') {
-		file_in = args[2]
-		file_out = args[3]
-		pdf(file_out, width=14, height=7)
-		plot_bgr_means(file_in)
-		dev.off()
-	} else if (args[1] == 'pca_genus') {
-		file_in = args[2]
-		file_out = args[3]
-		pdf(file_out, width=7, height=7)
-		plot_pca_genus(file_in)
-		dev.off()
-	} else if (args[1] == 'pca_paph_sect') {
-		file_in = args[2]
-		file_out = args[3]
-		pdf(file_out, width=7, height=7)
-		plot_pca_paph_sect(file_in)
-		dev.off()
-	} else if (args[1] == 'pca_paph_parv_spp') {
-		file_in = args[2]
-		file_out = args[3]
-		pdf(file_out, width=7, height=7)
-		plot_pca_paph_parv_spp(file_in)
-		dev.off()
-	} else if (args[1] == 'pca_all') {
-		file_out = args[5]
-		pdf(file_out, width=21, height=7)
-		plot_pca_all(args[2], args[3], args[4])
-		dev.off()
-	}
+	file_in = args[1]
+	file_out = args[2]
 
-	q()
+	if (grepl("BGR_means_plots\\.pdf", file_out)) {
+		pdf(file_out, width=14, height=7)
+		plot.bgr.means(file_in)
+		dev.off()
+	} else if (grepl("genus_pca_plot\\.pdf", file_out)) {
+		pdf(file_out, width=7, height=7)
+		plot.pca.genus(file_in)
+		dev.off()
+	} else if (grepl("Cypripedium\\.section_pca_plot\\.pdf", file_out)) {
+		pdf(file_out, width=7, height=7)
+		plot.pca.Cypripedium.section(file_in)
+		dev.off()
+	} else if (grepl("Paphiopedilum\\.section_pca_plot\\.pdf", file_out)) {
+		pdf(file_out, width=7, height=7)
+		plot.pca.Paphiopedilum.section(file_in)
+		dev.off()
+	} else if (grepl("Paphiopedilum\\.Parvisepalum\\.species_pca_plot\\.pdf", file_out)) {
+		pdf(file_out, width=7, height=7)
+		plot.pca.Paphiopedilum.Parvisepalum.species(file_in)
+		dev.off()
+	} else {
+		stop(sprintf("Don't know how to make %s", file_out))
+	}
 }
 
 main( commandArgs(TRUE) )
