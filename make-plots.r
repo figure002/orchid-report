@@ -3,8 +3,7 @@
 
 # Returns a color string for a `codeword` (vector of integers). An `on` bit in
 # the codeword returns the element at the same position from the color vector.
-# If none of the bits is `on`, the `default` color is returned.
-codeword_color <- function(codeword, colors, on=1, default="black") {
+codeword_color <- function(codeword, colors, on=1) {
 	if (length(colors) < length(codeword)) {
 		stop(sprintf("The color vector must have at least length(codeword)=",
 			"%s elements, found %s", length(codeword), length(colors)))
@@ -14,7 +13,7 @@ codeword_color <- function(codeword, colors, on=1, default="black") {
 			return(colors[i])
 		}
 	}
-	return(default)
+	stop(sprintf("Codeword did not contain an on=%s bit", on))
 }
 
 plot_bgr_means <- function(bgr_means_tsv) {
