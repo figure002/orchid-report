@@ -20,6 +20,7 @@ plot.pca.genus <- function(data_tsv) {
 		output.labels=c("Cypripedium","Mexipedium","Paphiopedilum",
 			"Phragmipedium","Selenipedium"),
 		nfactors=3, exclude=c(1))
+	title(main=expression(paste("Genera")))
 }
 
 plot.pca.Cypripedium.section <- function(data_tsv) {
@@ -28,6 +29,7 @@ plot.pca.Cypripedium.section <- function(data_tsv) {
 			"Enantiopedilum","Flabellinervia","Macrantha","Obtusipetala",
 			"Sinopedilum","Subtropica","Trigonopedia"),
 		nfactors=8, exclude=c(1), legend.pos="topleft")
+	title(main=expression(paste(italic("Cypripedium"), " sections")))
 }
 
 plot.pca.Paphiopedilum.section <- function(data_tsv) {
@@ -35,6 +37,7 @@ plot.pca.Paphiopedilum.section <- function(data_tsv) {
 		output.labels=c("Barbata","Brachypetalum","Cochlopetalum",
 			"Coryopedilum","Paphiopedilum","Pardalopetalum","Parvisepalum"),
 		nfactors=6, exclude=c(1))
+	title(main=expression(paste(italic("Paphiopedilum"), " sections")))
 }
 
 plot.pca.Paphiopedilum.Parvisepalum.species <- function(data_tsv) {
@@ -42,13 +45,14 @@ plot.pca.Paphiopedilum.Parvisepalum.species <- function(data_tsv) {
 		output.labels=c("P. armeniacum","P. delenatii","P. emersonii",
 			"P. malipoense","P. micranthum","P. vietnamense"),
 		nfactors=6, exclude=c(1), legend.pos="bottomright")
+	title(main=expression(paste(italic("Paphiopedilum"), " section ", italic("Parvisepalum"), " species")))
 }
 
 main <- function(args) {
 	file.in = args[1]
 	file.out = args[2]
 
-	if (grepl("BGR_means_plots\\.pdf", file.out)) {
+	if (grepl("bgr_means_plots\\.pdf", file.out)) {
 		pdf(file.out, width=14, height=7)
 		plot.bgr.means(file.in)
 		dev.off()

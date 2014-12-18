@@ -13,15 +13,15 @@ TEX2PDF_OPTS=-file-line-error -output-directory $(OUTDIR)
 $(OUTDIR)/%.aux: %.tex
 	$(TEX2PDF) $(TEX2PDF_OPTS) $<
 
-images/%_pca_plot.pdf: data/%.tsv
+images/%_pca_plot.pdf: data/%.tsv make-plots.r
 	Rscript make-plots.r $< $@
 
 report.pdf: db-stats.inc table-taxa.inc table-taxa-summary.inc \
-			images/BGR_means_plots.pdf images/genus_pca_plot.pdf \
+			images/bgr_means_plots.pdf images/genus_pca_plot.pdf \
 			images/Cypripedium.section_pca_plot.pdf \
 			images/Paphiopedilum.section_pca_plot.pdf \
 			images/Paphiopedilum.Parvisepalum.species_pca_plot.pdf \
-			images/Meta_database_diagram.pdf
+			images/meta_database_diagram.pdf
 
 db-stats.inc: data/meta.db
 	python stats-tex.py $< db_stats > $@
@@ -32,13 +32,13 @@ table-taxa.inc: data/meta.db
 table-taxa-summary.inc: data/meta.db
 	python stats-tex.py $< taxa_summary > $@
 
-images/BGR_means_plots.pdf: data/bgr-means.tsv
+images/bgr_means_plots.pdf: data/bgr-means.tsv
 	Rscript make-plots.r $< $@
 
 data/bgr-means.tsv: images/grabcut_output.png
 	python bgr-means.py $< > $@
 
-images/Meta_database_diagram.pdf: data/meta.db
+images/meta_database_diagram.pdf: data/meta.db
 	java -classpath schemacrawler/lib/*:. schemacrawler.tools.sqlite.Main \
 	-database=$< -password= -infolevel=standard -command=graph \
 	-noinfo=true -portablenames=true -outputformat=pdf -outputfile=$@
