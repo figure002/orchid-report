@@ -16,11 +16,15 @@ $(OUTDIR)/%.aux: %.tex
 images/%_pca_plot.pdf: data/%.tsv
 	Rscript make-plots.r $< $@
 
-report.pdf: images/BGR_means_plots.pdf images/genus_pca_plot.pdf \
+report.pdf: table-taxa.inc \
+			images/BGR_means_plots.pdf images/genus_pca_plot.pdf \
 			images/Cypripedium.section_pca_plot.pdf \
 			images/Paphiopedilum.section_pca_plot.pdf \
 			images/Paphiopedilum.Parvisepalum.species_pca_plot.pdf \
 			images/Meta_database_diagram.pdf
+
+table-taxa.inc: data/meta.db
+	python stats-tex.py $< taxa --col 3 > $@
 
 images/BGR_means_plots.pdf: data/bgr-means.tsv
 	Rscript make-plots.r $< $@

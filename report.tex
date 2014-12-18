@@ -1,4 +1,5 @@
 \documentclass[review,3p,twocolumn]{elsarticle}
+\setlength{\footskip}{30pt}
 
 %% Use the option review to obtain double line spacing
 %% \documentclass[authoryear,preprint,review,12pt]{elsarticle}
@@ -68,7 +69,7 @@
 }
 
 % Configure caption display.
-\captionsetup{margin=10pt,font=small,labelfont=bf,labelsep=colon}
+\captionsetup{margin=10pt,font=small,labelfont=bf,labelsep=period}
 
 % Define where the images can be found.
 \DeclareGraphicsExtensions{.pdf,.png,.jpg}
@@ -98,7 +99,7 @@
 %% \address{Address\fnref{label3}}
 %% \fntext[label3]{}
 
-\title{Automated species differentiation of slipper orchids using image analysis and artificial neural networks}
+\title{Automated identification of slipper orchids using image analysis and artificial neural networks}
 
 %% use optional labels to link authors explicitly to addresses:
 %% \author[label1,label2]{}
@@ -107,11 +108,14 @@
 
 
 \author[nbc]{Serrano Pereira}
-\author[nbc,hsl]{Barbara Gravendeel}
+\author[nbc,hsl,lu]{Barbara Gravendeel}
 \author[hsl]{Patrick Wijntjes}
 \author[nbc]{Rutger Vos}
-\address[nbc]{Naturalis Biodiversity Center, Leiden, The Netherlands}
-\address[hsl]{University of Applied Sciences Leiden, Leiden, The Netherlands}
+\address[nbc]{Naturalis Biodiversity Center, P.O. Box 9517, Leiden, The Netherlands}
+\address[hsl]{University of Applied Sciences Leiden, P.O. Box 382, Leiden, The Netherlands}
+\address[lu]{Institute Biology Leiden, Leiden University, P.O. Box 546, Leiden, The Netherlands}
+
+% Dave Roberts co-author?
 
 \begin{abstract}
 \lipsum[1]
@@ -143,11 +147,15 @@ artificial neural networks \sep slipper orchids
 
 \subsection{Reference photo collection}
 
-A collection of reference photos was compiled by searching the internet for images, mostly through Google Image searches. The correct genus, section, and species for each image was verified through literary research \citep{Cribb1998, Pridgeon1999, Frosch2012} and phylogenetic reconstructions based on molecular analyses \citep{Li2011, Chochai2012}. Every photo was subsequently uploaded to an account on the online image hosting service Flickr (\url{https://www.flickr.com}). On Flickr, each image was annotated with standardized tags in the formats \texttt{genus:name}, \texttt{section:name}, and \texttt{species:name}, where ``name'' is the taxonomic name for the corresponding taxonomic rank. A custom Python script utilizing the Flickr API was used to download the entire image collection with metadata from the Flickr account to a local computer, where images are stored in a directory hierarchy and image annotations are stored in a database (\ref{sect:meta-database}).
+A collection of reference photos was compiled by searching the internet for images, mostly through Google Image searches. The correct genus, section, and species for each image was verified by specialists and referenced to the literature \citet{Cribb1998, Pridgeon1999, Frosch2012} and phylogenetic reconstructions based on molecular analyses \citep{Li2011, Chochai2012}. Every photo was subsequently uploaded to an account on the online image hosting service Flickr (\url{https://www.flickr.com}). On Flickr, each image was annotated with standardized tags in the formats \texttt{genus:name}, \texttt{section:name}, and \texttt{species:name}. A custom Python script utilizing the Flickr API was used to download the entire image collection with metadata from the Flickr account to a local computer, where images are stored in a directory hierarchy and image annotations are stored in a database (\ref{sect:meta-database}).
 
 \subsection{Image feature extraction}
 
-Several image feature extraction methods were implemented and released in the form of a Python package called ImgPheno (\url{https://github.com/naturalis/imgpheno}). This Python package depends on OpenCV (\url{http://opencv.org/}) for computer vision functionality and NumPy (\url{http://www.numpy.org/}) for array and matrix manipulation functionalities. It implements colour image enhancement methods developed by \citet{Naik2003}.
+Several image feature extraction methods were implemented and released in the form of a Python package called ImgPheno (\url{https://github.com/naturalis/imgpheno}). This Python package depends on OpenCV (\url{http://opencv.org/}) for computer vision functionality and NumPy (\url{http://www.numpy.org/}) for array and matrix manipulation functionalities. Image preprocessing and enhancement methods were implemented as well. These include colour image enhancement methods developed by \citet{Naik2003}.
+
+\subsection{Training}
+
+Several artificial neural network training routines were developed and released as a separate Python package called NBClassify (\url{https://github.com/naturalis/nbclassify/nbclassify}).
 
 \subsection{Cross-validation}
 
@@ -160,18 +168,18 @@ Principal components analysis (PCA) was performed on the training data to assess
 
 \subsection{Reference photo collection}
 
-In total 1127 photos of 115 species were collected (table~\ref{tbl:photo-counts}). The collection contains photos for the genera Cypripedium, Mexipedium, Paphiopedilum, Phragmipedium, and Selenipedium. With only 4 photos for the genera Mexipedium and Selenipedium, the collection is highly unbalanced.
+In total 1127 photos of 115 species were collected (table~\ref{tbl:photo-counts}). The collection contains photos for the genera \textit{Cypripedium}, \textit{Mexipedium}, \textit{Paphiopedilum}, \textit{Phragmipedium}, and \textit{Selenipedium}. With only 4 photos for the genera \textit{Mexipedium} and \textit{Selenipedium}, the collection is highly unbalanced.
 
 \begin{table*}[t]\footnotesize
     \caption{The number of photos collected per genus, as well as the number of sections and species per genus represented by the photo collection. A total of 1127 photos of 115 species were collected.}
     \begin{center}
     \begin{tabular}{llll}
     \toprule
-    \textbf{Genus} & \textbf{Section count} & \textbf{Species count} & \textbf{Photo count} \\
+    \textbf{Genus} & \textbf{Section} & \textbf{Species} & \textbf{Photos} \\
     \midrule
-    \textit{Cypripedium} & 11 & 23 & 141 \\
-    \textit{Mexipedium} & 1 & 1 & 4 \\
-    \textit{Paphiopedilum} & 7 & 71 & 889 \\
+    \textit{Cypripedium} & 11 & 24 & 149 \\
+    \textit{Mexipedium} & 1 & 1 & 8 \\
+    \textit{Paphiopedilum} & 7 & 71 & 888 \\
     \textit{Phragmipedium} & 4 & 19 & 89 \\
     \textit{Selenipedium} & 1 & 1 & 4 \\
     \bottomrule
@@ -202,7 +210,7 @@ Principal components analysis (PCA) with orthogonal rotation (varimax) was condu
     \begin{center}
     \begin{tabular}{lp{3cm}p{3cm}}
     \toprule
-    \textbf{Classification Precision} & \textbf{Accuracy (k=4)} & \textbf{Accuracy (k=10)} \\
+    \textbf{Classification} & \textbf{Accuracy (k=4)} & \textbf{Accuracy (k=10)} \\
     \midrule
     genus                   & 75\%    & 81\% \\
     section                 & 52\%    & 60\% \\
@@ -215,12 +223,17 @@ Principal components analysis (PCA) with orthogonal rotation (varimax) was condu
     \label{tbl:x-validation-results}
 \end{table*}
 
-\section{Conclusion and discussion}
+\section{Conclusions and discussion}
 \label{sect:conclusion}
+
+% Need more and better photo material.
+% Better feature extraction methods.
 
 \lipsum[1]
 
 \section*{Acknowledgements}
+
+% De namen van alle fotografen in de format J.H. Simpson.
 
 \lipsum[1]
 
@@ -285,143 +298,29 @@ Principal components analysis (PCA) with orthogonal rotation (varimax) was condu
 \label{sect:reference-photo-collection}
 
 \begin{footnotesize}
-\begin{longtable}{llll}
+\begin{longtable}{llllll}
     \caption{Taxa represented by the reference photo collection.}
-    \label{tbl:reference-photo-collection}
+    \label{tbl:taxa-stats}
     \endfirsthead
-        \caption*{Table continued...}
-        \\\textbf{Genus} & \textbf{Section} & \textbf{Species} & \textbf{Photo count} \\
+        \caption*{\textbf{Table \ref{tbl:taxa-stats}.} (continued)}
+        \\\textbf{Taxa} & \textbf{Photos} \\
         \midrule
     \endhead
-        \midrule
+        %\midrule
+        \caption*{\footnotesize\textit{(continued on next page)}}
     \endfoot
         \bottomrule
     \endlastfoot
 
     \toprule
-    \textbf{Genus} & \textbf{Section} & \textbf{Species} & \textbf{Photo count} \\
+    \textbf{Taxa} & \textbf{Photos} \\
     \midrule
-    Cypripedium & Acaulia & \textit{acaule} & 4 \\
-    Cypripedium & Arietinum & \textit{arietinum} & 3 \\
-    Cypripedium & Arietinum & \textit{plectrochilum} & 4 \\
-    Cypripedium & Bifolia & \textit{guttatum} & 6 \\
-    Cypripedium & Bifolia & \textit{yatabeanum} & 1 \\
-    Cypripedium & Cypripedium & \textit{calceolus} & 8 \\
-    Cypripedium & Cypripedium & \textit{calcicola} & 10 \\
-    Cypripedium & Cypripedium & \textit{farreri} & 4 \\
-    Cypripedium & Cypripedium & \textit{parviflorum} & 4 \\
-    Cypripedium & Cypripedium & \textit{shanxiense} & 8 \\
-    Cypripedium & Cypripedium & \textit{tibeticum} & 20 \\
-    Cypripedium & Cypripedium & \textit{yunnanense} & 3 \\
-    Cypripedium & Enantiopedilum & \textit{fasciculatum} & 1 \\
-    Cypripedium & Flabellinervia & \textit{formosanum} & 4 \\
-    Cypripedium & Flabellinervia & \textit{japonicum} & 7 \\
-    Cypripedium & Macrantha & \textit{franchetii} & 5 \\
-    Cypripedium & Obtusipetala & \textit{flavum} & 19 \\
-    Cypripedium & Obtusipetala & \textit{reginae} & 2 \\
-    Cypripedium & Sinopedilum & \textit{bardolphianum} & 13 \\
-    Cypripedium & Sinopedilum & \textit{forrestii} & 1 \\
-    Cypripedium & Subtropica & \textit{subtropicum} & 1 \\
-    Cypripedium & Subtropica & \textit{wardii} & 1 \\
-    Cypripedium & Trigonopedia & \textit{fargesii} & 9 \\
-    Cypripedium & Trigonopedia & \textit{sichuanense} & 11 \\
-    Mexipedium & Mexipedium & \textit{xerophyticum} & 4 \\
-    Paphiopedilum & Barbata & \textit{acmodontum} & 11 \\
-    Paphiopedilum & Barbata & \textit{appletonianum} & 7 \\
-    Paphiopedilum & Barbata & \textit{argus} & 11 \\
-    Paphiopedilum & Barbata & \textit{barbatum} & 17 \\
-    Paphiopedilum & Barbata & \textit{boungainvilleanum} & 9 \\
-    Paphiopedilum & Barbata & \textit{bullenianum} & 12 \\
-    Paphiopedilum & Barbata & \textit{callosum} & 16 \\
-    Paphiopedilum & Barbata & \textit{ciliolare} & 7 \\
-    Paphiopedilum & Barbata & \textit{dayanum} & 11 \\
-    Paphiopedilum & Barbata & \textit{fowliei} & 11 \\
-    Paphiopedilum & Barbata & \textit{hennisianum} & 15 \\
-    Paphiopedilum & Barbata & \textit{hookerae} & 12 \\
-    Paphiopedilum & Barbata & \textit{javanicum} & 6 \\
-    Paphiopedilum & Barbata & \textit{lawrenceanum} & 12 \\
-    Paphiopedilum & Barbata & \textit{mastersianum} & 9 \\
-    Paphiopedilum & Barbata & \textit{papuanum} & 8 \\
-    Paphiopedilum & Barbata & \textit{purpuratum} & 16 \\
-    Paphiopedilum & Barbata & \textit{sangii} & 8 \\
-    Paphiopedilum & Barbata & \textit{schoseri} & 9 \\
-    Paphiopedilum & Barbata & \textit{sukhakulii} & 19 \\
-    Paphiopedilum & Barbata & \textit{superbiens} & 13 \\
-    Paphiopedilum & Barbata & \textit{tonsum} & 18 \\
-    Paphiopedilum & Barbata & \textit{urbanianum} & 20 \\
-    Paphiopedilum & Barbata & \textit{venustum} & 10 \\
-    Paphiopedilum & Barbata & \textit{violascens} & 15 \\
-    Paphiopedilum & Barbata & \textit{wardii} & 20 \\
-    Paphiopedilum & Barbata & \textit{wentworthianum} & 4 \\
-    Paphiopedilum & Brachypetalum & \textit{bellatulum} & 10 \\
-    Paphiopedilum & Brachypetalum & \textit{concolor} & 14 \\
-    Paphiopedilum & Brachypetalum & \textit{godefroyae} & 13 \\
-    Paphiopedilum & Brachypetalum & \textit{niveum} & 19 \\
-    Paphiopedilum & Brachypetalum & \textit{thaianum} & 6 \\
-    Paphiopedilum & Brachypetalum & \textit{wenshanense} & 3 \\
-    Paphiopedilum & Cochlopetalum & \textit{glaucophyllum} & 15 \\
-    Paphiopedilum & Cochlopetalum & \textit{liemianum} & 20 \\
-    Paphiopedilum & Cochlopetalum & \textit{primulinum} & 19 \\
-    Paphiopedilum & Cochlopetalum & \textit{victoria-mariae} & 3 \\
-    Paphiopedilum & Cochlopetalum & \textit{victoria-regina} & 9 \\
-    Paphiopedilum & Coryopedilum & \textit{adductum} & 8 \\
-    Paphiopedilum & Coryopedilum & \textit{gigantifolium} & 2 \\
-    Paphiopedilum & Coryopedilum & \textit{glanduliferum} & 8 \\
-    Paphiopedilum & Coryopedilum & \textit{kolopakingii} & 2 \\
-    Paphiopedilum & Coryopedilum & \textit{philippinense} & 10 \\
-    Paphiopedilum & Coryopedilum & \textit{randsii} & 5 \\
-    Paphiopedilum & Coryopedilum & \textit{rothschildianum} & 12 \\
-    Paphiopedilum & Coryopedilum & \textit{stonei} & 6 \\
-    Paphiopedilum & Coryopedilum & \textit{supardii} & 2 \\
-    Paphiopedilum & Coryopedilum & \textit{wilhelminiae} & 5 \\
-    Paphiopedilum & Paphiopedilum & \textit{barbigerum} & 13 \\
-    Paphiopedilum & Paphiopedilum & \textit{charlesworthii} & 10 \\
-    Paphiopedilum & Paphiopedilum & \textit{druryi} & 13 \\
-    Paphiopedilum & Paphiopedilum & \textit{exul} & 15 \\
-    Paphiopedilum & Paphiopedilum & \textit{fairrieanum} & 14 \\
-    Paphiopedilum & Paphiopedilum & \textit{gratrixianum} & 11 \\
-    Paphiopedilum & Paphiopedilum & \textit{helenae} & 13 \\
-    Paphiopedilum & Paphiopedilum & \textit{henryanum} & 15 \\
-    Paphiopedilum & Paphiopedilum & \textit{hirsutissimum} & 14 \\
-    Paphiopedilum & Paphiopedilum & \textit{insigne} & 17 \\
-    Paphiopedilum & Paphiopedilum & \textit{spicerianum} & 20 \\
-    Paphiopedilum & Paphiopedilum & \textit{tigrinum} & 13 \\
-    Paphiopedilum & Paphiopedilum & \textit{villosum} & 20 \\
-    Paphiopedilum & Pardalopetalum & \textit{dianthum} & 9 \\
-    Paphiopedilum & Pardalopetalum & \textit{haynaldianum} & 13 \\
-    Paphiopedilum & Pardalopetalum & \textit{lowii} & 18 \\
-    Paphiopedilum & Pardalopetalum & \textit{parishii} & 8 \\
-    Paphiopedilum & Parvisepalum & \textit{armeniacum} & 27 \\
-    Paphiopedilum & Parvisepalum & \textit{delenatii} & 13 \\
-    Paphiopedilum & Parvisepalum & \textit{emersonii} & 19 \\
-    Paphiopedilum & Parvisepalum & \textit{malipoense} & 29 \\
-    Paphiopedilum & Parvisepalum & \textit{micranthum} & 39 \\
-    Paphiopedilum & Parvisepalum & \textit{vietnamense} & 8 \\
-    Phragmipedium & Lorifolia & \textit{boissierianum} & 2 \\
-    Phragmipedium & Lorifolia & \textit{hirtzii} & 1 \\
-    Phragmipedium & Lorifolia & \textit{longifolium} & 9 \\
-    Phragmipedium & Lorifolia & \textit{pearcei} & 7 \\
-    Phragmipedium & Lorifolia & \textit{vittatum} & 2 \\
-    Phragmipedium & Micropetalum & \textit{andreettae} & 3 \\
-    Phragmipedium & Micropetalum & \textit{besseae} & 12 \\
-    Phragmipedium & Micropetalum & \textit{fischeri} & 5 \\
-    Phragmipedium & Micropetalum & \textit{schlimii} & 18 \\
-    Phragmipedium & Phragmipedium & \textit{caricinum} & 3 \\
-    Phragmipedium & Phragmipedium & \textit{caudatum} & 2 \\
-    Phragmipedium & Phragmipedium & \textit{christiansenianum} & 3 \\
-    Phragmipedium & Phragmipedium & \textit{exstaminodium} & 1 \\
-    Phragmipedium & Phragmipedium & \textit{klotzschianum} & 1 \\
-    Phragmipedium & Phragmipedium & \textit{lindenii} & 1 \\
-    Phragmipedium & Phragmipedium & \textit{ritchteri} & 10 \\
-    Phragmipedium & Phragmipedium & \textit{warscewiczianum} & 5 \\
-    Phragmipedium & Platypetalum & \textit{lindelayanum} & 1 \\
-    Phragmipedium & Platypetalum & \textit{sargentianum} & 3 \\
-    Selenipedium & Selenipedium & \textit{palmifolium} & 4 \\
+    \input{table-taxa.inc}
 \end{longtable}
 \end{footnotesize}
 
 \clearpage
-\section{Scatter plots for principal component analyses}
+\section{Scatter plots for principal components analyses}
 \label{sect:pca-plots}
 
 \begin{figure}[!h]
