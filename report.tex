@@ -75,6 +75,9 @@
 \DeclareGraphicsExtensions{.pdf,.png,.jpg}
 \graphicspath{{./images/}}
 
+% Define some commands.
+\input{db-stats.inc}
+
 \begin{document}
 
 \begin{frontmatter}
@@ -168,20 +171,16 @@ Principal components analysis (PCA) was performed on the training data to assess
 
 \subsection{Reference photo collection}
 
-In total 1127 photos of 115 species were collected (table~\ref{tbl:photo-counts}). The collection contains photos for the genera \textit{Cypripedium}, \textit{Mexipedium}, \textit{Paphiopedilum}, \textit{Phragmipedium}, and \textit{Selenipedium}. With only 4 photos for the genera \textit{Mexipedium} and \textit{Selenipedium}, the collection is highly unbalanced.
+In total {\PhotoCount} photos for {\SpeciesCount} species were collected (table~\ref{tbl:photo-counts}). The collection contains photos for the genera \textit{Cypripedium}, \textit{Mexipedium}, \textit{Paphiopedilum}, \textit{Phragmipedium}, and \textit{Selenipedium}. With only 4 photos for the genera \textit{Mexipedium} and \textit{Selenipedium}, the collection is highly unbalanced.
 
 \begin{table*}[t]\footnotesize
-    \caption{The number of photos collected per genus, as well as the number of sections and species per genus represented by the photo collection. A total of 1127 photos of 115 species were collected.}
+    \caption{The number of photos collected per genus, as well as the number of sections and species per genus represented by the photo collection. A total of {\PhotoCount} photos for {\SpeciesCount} species were collected.}
     \begin{center}
     \begin{tabular}{llll}
     \toprule
     \textbf{Genus} & \textbf{Section} & \textbf{Species} & \textbf{Photos} \\
     \midrule
-    \textit{Cypripedium} & 11 & 24 & 149 \\
-    \textit{Mexipedium} & 1 & 1 & 8 \\
-    \textit{Paphiopedilum} & 7 & 71 & 888 \\
-    \textit{Phragmipedium} & 4 & 19 & 89 \\
-    \textit{Selenipedium} & 1 & 1 & 4 \\
+    \input{table-taxa-summary.inc}
     \bottomrule
     \end{tabular}
     \end{center}

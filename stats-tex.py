@@ -23,9 +23,9 @@ def main():
         dest="task"
     )
 
-    parser_photo_count = subparsers.add_parser(
-        "photo_count",
-        help="Get the total number of photos.",
+    parser_db_stats = subparsers.add_parser(
+        "db_stats",
+        help="Print stats as LaTeX commands",
         description=""
     )
 
@@ -50,16 +50,17 @@ def main():
 
     args = parser.parse_args()
 
-    if args.task == 'photo_count':
-        photo_count(args.meta)
+    if args.task == 'db_stats':
+        db_stats(args.meta)
     if args.task == 'taxa':
         photo_stats(args.meta, args.col)
     if args.task == 'taxa_summary':
         photo_stats_summary(args.meta)
 
-def photo_count(db_path):
+def db_stats(db_path):
     with db.session_scope(db_path) as (session, metadata):
-        print get_photo_count(session, metadata)
+        print "\\newcommand{{\\PhotoCount}}{{{0}}}".format(get_photo_count(session, metadata))
+        print "\\newcommand{{\\SpeciesCount}}{{{0}}}".format(get_species_count(session, metadata))
 
 def photo_stats(db_path, n_col=1):
     with db.session_scope(db_path) as (session, metadata):
@@ -118,6 +119,10 @@ def get_photo_count(session, metadata):
     configure_mappers()
     Photo = Base.classes.photos
     return session.query(func.count(Photo.id)).one()[0]
+
+def get_species_count(session, metadata):
+    q = db.get_taxa_photo_count(session, metadata)
+    return len(q.all())
 
 def get_taxa_photo_count_summary(session, metadata):
     """Return the section count, species count, and photo count per genus."""
