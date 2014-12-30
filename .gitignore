@@ -1,9 +1,9 @@
 build/
+images/
 *.db
 *.inc
-*.pdf
-*.sublime-project
-*.sublime-workspace
+*.pyc
+*.sublime-*
 *.zip
 .RData
 .Rhistory

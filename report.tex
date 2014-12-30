@@ -1,4 +1,4 @@
-\documentclass[review,3p,twocolumn]{elsarticle}
+\documentclass[3p,twocolumn,10pt]{elsarticle}
 \setlength{\footskip}{30pt}
 
 %% Use the option review to obtain double line spacing
@@ -121,18 +121,19 @@
 % Dave Roberts co-author?
 
 \begin{abstract}
-\lipsum[1]
+A generic hierarchical identification system was developed for the automated identification of species by image recognition. The effectiveness of this system was assessed using photographs of orchids of the subfamily Cypripedioideae. Colour and shape features were extracted from single flower photos of {\SpeciesCount} orchid species. Generic image preprocessing, segmentation, and feature extraction algorithms were implemented to obtain morphometric data for the different orchid species. The identification system uses a hierarchy of artificial neural networks for pattern recognition and automated classification. The neural network hierarchy mirrors the taxonomic hierarchy of the Cypripedioideae, such that user-submitted photos could be assigned a genus, section, and species classification. The ability of the identification system to correctly identify user-submitted photos varied depending on the photo quality, the number of species included for training, and the desired taxonomic level for identification. High quality photos were scarce for some taxa and were under-represented in the training set, resulting in imbalanced network training. The simple colour features used for training were not sufficient to reliably identify photos to the correct section and species, and more specialised feature extraction algorithms need to be developed to improve accuracy.
 \end{abstract}
 
 \begin{keyword}
 %% keywords here, in the form: keyword \sep keyword
 
+Cypripedioideae \sep feature extraction \sep identification \sep image analysis
+\sep neural networks \sep orchids \sep pattern recognition \sep taxonomy
+
 %% PACS codes here, in the form: \PACS code \sep code
 
 %% MSC codes here, in the form: \MSC code \sep code
 %% or \MSC[2008] code \sep code (2000 is the default)
-computer vision \sep image feature extraction \sep pattern recognition \sep
-artificial neural networks \sep slipper orchids
 \end{keyword}
 
 \end{frontmatter}
@@ -143,7 +144,9 @@ artificial neural networks \sep slipper orchids
 \section{Introduction}
 \label{sect:introduction}
 
-\lipsum[1-3]
+Ongoing advances in computer vision and machine learning has lead to the development of numerous semi- or fully automated species identification systems. Such systems have been successful in the identification of plant species \citep{Arinkin2014, Nilsback2008, Sanz2013}, phytoplankton \citep{Boddy1994}, diatom frustules \citep{Kloster2014}, and insects \citep{Weeks1999,Kang2012}, amongst others. Artificial Neural Networks (ANNs) in particular have become an increasingly popular choice in automated image classification systems \citep{Weeks1997}.
+
+\lipsum[1]
 
 \section{Materials and methods}
 \label{sect:methods}
@@ -154,7 +157,18 @@ A collection of reference photos was compiled by searching the internet for imag
 
 \subsection{Image feature extraction}
 
-Several image feature extraction methods were implemented and released in the form of a Python package called ImgPheno (\url{https://github.com/naturalis/imgpheno}). This Python package depends on OpenCV (\url{http://opencv.org/}) for computer vision functionality and NumPy (\url{http://www.numpy.org/}) for array and matrix manipulation functionalities. Image preprocessing and enhancement methods were implemented as well. These include colour image enhancement methods developed by \citet{Naik2003}.
+Several feature extraction and artificial neural network training routines were implemented and released as a set of Python scripts (\url{https://github.com/naturalis/nbclassify}). The scripts implement ImgPheno (\url{https://github.com/naturalis/imgpheno}), a collection of several image feature extraction methods. They make use of OpenCV \citep{Pulli2012} for computer vision functionality and NumPy \citep{VanderWalt2011} for array and matrix manipulation functionalities. Feature extraction was automated with a Python script, \texttt{nbc-trainer}, that is executed from the command-line. In addition to the command-line options, detailed configurations are kept in a separate configuration file, which eases reproduction. In the case of feature extraction, configurations include image preprocessing (scaling, colour correction, segmentation), features to be extracted with optional parameters, data format, and defining a classification hierarchy for generating training data for different neural networks.
+
+As part of the feature extraction workflow, each image is first scaled down if the image exceeds a predefined maximum dimension. The region of interest of the image, in this case the outline of the flower, is then obtained with the GrabCut segmentation algorithm \citep{Rother2004}. For the GrabCut algorithm, an initial region of interest must first be defined in the image, wherein the foreground object (i.e. the flower) must lie. Subsequent segmentation rounds further label pixels within this region as foreground or background. The initial region of interest is set to the entire image but with a small margin from the image borders. Once the foreground is segmented, only that foreground region is used for feature extraction (figure \ref{fig:grabcut-output}).
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=\textwidth]{grabcut_output_with_roi}
+    \caption{Foreground segmentation with GrabCut.}
+    \label{fig:grabcut-output}
+\end{figure*}
+
+The \verb/color_bgr_means/ method extracts the BGR colour intensities from a region of interest in an image. This feature has a parameter, \verb/bins/, which is used to set the number of horizontal and vertical sections in which to divide the image. The method returns for each section the mean intensity for each of the components of the BGR colour space (blue, green, and red) (figure~\ref{fig:bgr-means-plots}).
 
 \subsection{Training}
 
@@ -171,10 +185,10 @@ Principal components analysis (PCA) was performed on the training data to assess
 
 \subsection{Reference photo collection}
 
-In total {\PhotoCount} photos for {\SpeciesCount} species were collected (table~\ref{tbl:photo-counts}). The collection contains photos for the genera \textit{Cypripedium}, \textit{Mexipedium}, \textit{Paphiopedilum}, \textit{Phragmipedium}, and \textit{Selenipedium}. With only 4 photos for the genera \textit{Mexipedium} and \textit{Selenipedium}, the collection is highly unbalanced.
+In total {\PhotoCount} photos for {\SpeciesCount} species were collected (table~\ref{tbl:photo-counts}). The collection contains photos for the genera \textit{Cypripedium}, \textit{Mexipedium}, \textit{Paphiopedilum}, \textit{Phragmipedium}, and \textit{Selenipedium}. With the number of photos for the five genera ranging from just 4 for the genus \textit{Selenipedium} to 888 for \textit{Paphiopedilum}, the collection is highly unbalanced.
 
-\begin{table*}[t]\footnotesize
-    \caption{The number of photos collected per genus, as well as the number of sections and species per genus represented by the photo collection. A total of {\PhotoCount} photos for {\SpeciesCount} species were collected.}
+\begin{table}[h]\footnotesize
+    \caption{The number of photos collected per genus, as well as the number of sections and species per genus represented by the photo collection.}
     \begin{center}
     \begin{tabular}{llll}
     \toprule
@@ -185,7 +199,7 @@ In total {\PhotoCount} photos for {\SpeciesCount} species were collected (table~
     \end{tabular}
     \end{center}
     \label{tbl:photo-counts}
-\end{table*}
+\end{table}
 
 \subsection{Image feature extraction}
 
@@ -204,10 +218,10 @@ Stratified k-folds cross-validation was performed to estimate the accuracy of th
 
 Principal components analysis (PCA) with orthogonal rotation (varimax) was conducted on training training data for genus classification containing -1 to 1 scaled mean colour intensities for the BGR colour space with 20 horizontal and vertical bins, which translates to 120 features. The Kaiser-Meyer-Olkin measure verified the sampling adequacy for the analysis with an overall Measure of Sampling Adequacy (MSA) of 0.92, and all MSA values for individual items were >0.76, which is well above the acceptable limit of 0.5. Bartlett's test of sphericity $\chi^2 (7140) = 452642$, $p = 0$, indicated that correlations between items were sufficiently large for PCA. An initial PCA was run to obtain eigenvalues for each component in the data. The scree plot constructed from the eigenvalues showed inflexion that would justify retaining 3 components (explaining 65\% of the variance). Given the large sample size (N = 1134) and the convergence of the scree plot, 3 components were retained in the final analysis. The same PCA workflow was repeated for training data for section classification within the genus Paphiopedilum, and for species classification within the section Parvisepalum of genus Paphiopedilum. Figure~\ref{fig:pca-plots} shows the scatter plots for the principal components.
 
-\begin{table*}[t]\footnotesize
+\begin{table}[h]\footnotesize
     \caption{Results for stratified k-fold cross-validations. Cross-validation was performed on three taxonomic ranks: genus, section, and species. The results for genus/section and genus/section/species combine the results from their respective ranks.}
     \begin{center}
-    \begin{tabular}{lp{3cm}p{3cm}}
+    \begin{tabular}{lp{1.5cm}p{1.5cm}}
     \toprule
     \textbf{Classification} & \textbf{Accuracy (k=4)} & \textbf{Accuracy (k=10)} \\
     \midrule
@@ -220,10 +234,12 @@ Principal components analysis (PCA) with orthogonal rotation (varimax) was condu
     \end{tabular}
     \end{center}
     \label{tbl:x-validation-results}
-\end{table*}
+\end{table}
 
 \section{Conclusions and discussion}
 \label{sect:conclusion}
+
+In an effort the normalize images prior to feature extraction, some colour image enhancement methods developed by \citet{Naik2003} were implemented. Most images used were already of good quality, and performing hue-preserving linear transformation with maximum contrast often did not result in an enhanced image, and thus colour enhancement using this method did not result in improved identification accuracy. Several feature extraction method were implemented in the ImgPheno package, including methods for obtaining image moments based shape characteristics, methods for getting contour outline characteristics (e.g. convex area, eccentricity, equivalent diameter, extent, orientation, perimeter, solidity), specialised shape description methods, and methods for obtaining colour data. This study builds on a simple features extraction method for obtaining colour data, \verb/color_bgr_means/.
 
 % Need more and better photo material.
 % Better feature extraction methods.
@@ -298,7 +314,7 @@ Principal components analysis (PCA) with orthogonal rotation (varimax) was condu
 
 \begin{footnotesize}
 \begin{longtable}{llllll}
-    \caption{Taxa represented by the reference photo collection.}
+    \caption{Taxa represented by the reference photo collection and the number of photos for each species.}
     \label{tbl:taxa-stats}
     \endfirsthead
         \caption*{\textbf{Table \ref{tbl:taxa-stats}.} (continued)}

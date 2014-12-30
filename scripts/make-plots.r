@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # Usage: Rscript make-plots.r {bgr_means|pca_all|...} [arg ..]
 
-source('functions.R')
+source('scripts/functions.r')
 
 plot.bgr.means <- function(bgr_means_tsv) {
     bgr.means = read.delim(bgr_means_tsv)

@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import os
 import sys
 
 import cv2
 import numpy as np
-
 import imgpheno as ft
+
+from common import grabcut, scale_max_perimeter
 
 def main():
     parser = argparse.ArgumentParser(description='Get the rough shape from the main object')
@@ -16,26 +16,10 @@ def main():
     parser.add_argument('--max-size', metavar='N', type=float, help="Scale the input image down if its perimeter exceeds N. Default is no scaling.")
     parser.add_argument('--iters', metavar='N', type=int, default=5, help="The number of segmentation iterations. Default is 5.")
     parser.add_argument('--margin', metavar='N', type=int, default=1, help="The margin of the foreground rectangle from the edges. Default is 1.")
-    parser.add_argument('-k', metavar='N', type=int, default=20, help="The resolution for the outline feature. Default is 20.")
+    parser.add_argument('-k', metavar='N', type=int, default=20, help="The number of horizontal and vertical bins. Default is 20.")
     args = parser.parse_args()
     process_image(args, args.path)
     return 0
-
-def grabcut(img, iters=5, roi=None, margin=5):
-    mask = np.zeros(img.shape[:2], np.uint8)
-    bgdmodel = np.zeros((1,65), np.float64)
-    fgdmodel = np.zeros((1,65), np.float64)
-    if not roi:
-        roi = (margin, margin, img.shape[1]-margin*2, img.shape[0]-margin*2)
-    cv2.grabCut(img, mask, roi, bgdmodel, fgdmodel, iters, cv2.GC_INIT_WITH_RECT)
-    return mask
-
-def scale_max_perimeter(img, m):
-    perim = sum(img.shape[:2])
-    if m and perim > m:
-        rf = float(m) / perim
-        img = cv2.resize(img, None, fx=rf, fy=rf)
-    return img
 
 def process_image(args, path):
     img = cv2.imread(path)
@@ -48,7 +32,8 @@ def process_image(args, path):
 
     # Perform segmentation.
     sys.stderr.write("Segmenting...\n")
-    mask = grabcut(img, args.iters, None, args.margin)
+    roi = (args.margin, args.margin, img.shape[1]-args.margin*2, img.shape[0]-args.margin*2)
+    mask = grabcut(img, roi, args.iters)
     bin_mask = np.where((mask==cv2.GC_FGD) + (mask==cv2.GC_PR_FGD), 255, 0).astype('uint8')
 
     # Obtain contours (all points) from the mask.
