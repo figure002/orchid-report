@@ -23,13 +23,16 @@
 \usepackage{tgpagella}
 
 % Extensive support for hypertext.
-\usepackage{hyperref}
+\usepackage[hidelinks,colorlinks=true]{hyperref}
 
 % Easy access to the Lorem Ipsum dummy text.
 \usepackage{lipsum}
 
 % Pro­vides both fore­ground (text, rules, etc.) and back­ground colour man­age­ment.
 \usepackage{color}
+
+% Driver-independent color extensions.
+\usepackage[x11names]{xcolor}
 
 % Enhanced support for graphics.
 \usepackage{graphicx}
@@ -59,15 +62,6 @@
 
 \journal{Journal Name}
 
-% Configure hyperlink colors.
-\hypersetup{
-    colorlinks,
-    citecolor=black,
-    filecolor=black,
-    linkcolor=black,
-    urlcolor=black
-}
-
 % Configure caption display.
 \captionsetup{margin=10pt,font=small,labelfont=bf,labelsep=period}
 
@@ -79,6 +73,15 @@
 \input{db-stats.inc}
 
 \begin{document}
+
+% Configure hyperlink colors after document start to override possible
+% documentclass defaults.
+\hypersetup{
+    citecolor=DodgerBlue4,
+    filecolor=DodgerBlue4,
+    linkcolor=DodgerBlue4,
+    urlcolor=DodgerBlue4
+}
 
 \begin{frontmatter}
 
@@ -279,16 +282,16 @@ In an effort the normalize images prior to feature extraction, some colour image
 %\usepackage{numcompress}\bibliographystyle{model4-names}\biboptions{authoryear}
 
 %% APA style
-%\bibliographystyle{model5-names}\biboptions{authoryear}
+%\bibliographystyle{bst/model5-names}\biboptions{authoryear}
 
 %% AMA style
-%\usepackage{numcompress}\bibliographystyle{model6-num-names}
+%\usepackage{numcompress}\bibliographystyle{bst/model6-num-names}
 
 %% `Elsevier LaTeX' style
 %\bibliographystyle{elsarticle-num}
 
 %% Custom APA style
-%\bibliographystyle{model5-names}
+%\bibliographystyle{bst/model5-names}
 \bibliographystyle{bst/apa-custom}
 \biboptions{authoryear}
 
