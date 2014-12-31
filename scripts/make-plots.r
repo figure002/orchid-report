@@ -11,8 +11,10 @@ plot.bgr.means <- function(bgr_means_tsv) {
     ver = data.frame(b=bgr.means$v[seq(1, n, 3)], g=bgr.means$v[seq(2, n, 3)], r=bgr.means$v[seq(3, n, 3)])
 
     par(mfrow=c(1,2))
-    matplot(hor, type=c("b"), pch=21, lwd=2, col=bgr, bg=bgr, xlab="Horizontal bin", ylab="Mean Colour Intensity", ylim=c(0,255))
-    matplot(ver, type=c("b"), pch=21, lwd=2, col=bgr, bg=bgr, xlab="Vertical bin", ylab="Mean Colour Intensity", ylim=c(0,255))
+    #matplot(hor, type=c("b"), pch=21, lwd=2, col=bgr, bg=bgr, xlab="Horizontal bin", ylab="Mean Colour Intensity", ylim=c(0,255))
+    #matplot(ver, type=c("b"), pch=21, lwd=2, col=bgr, bg=bgr, xlab="Vertical bin", ylab="Mean Colour Intensity", ylim=c(0,255))
+    barplot(t(as.matrix(hor)), pch=21, lwd=2, col=bgr, bg=bgr, xlab="Horizontal bin", ylab="Mean Colour Intensity", ylim=c(0,255), cex.axis=1.2, cex.lab=1.2, beside=TRUE)
+    barplot(t(as.matrix(ver)), pch=21, lwd=2, col=bgr, bg=bgr, xlab="Horizontal bin", ylab="Mean Colour Intensity", ylim=c(0,255), cex.axis=1.2, cex.lab=1.2, beside=TRUE)
 }
 
 plot.pca.genus <- function(data_tsv) {

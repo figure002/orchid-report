@@ -162,9 +162,9 @@ A collection of reference photos was compiled by searching the internet for imag
 
 Several feature extraction and neural network training routines were implemented and released as a set of Python scripts (\url{https://github.com/naturalis/nbclassify}). The scripts implement a separate Python package called ImgPheno (\url{https://github.com/naturalis/imgpheno}), which is a collection of several image feature extraction methods. They make use of OpenCV \citep{Pulli2012} for computer vision functionality and NumPy \citep{VanderWalt2011} for array and matrix manipulation functionalities. Feature extraction was automated with a Python script that is executed from the command-line. Configurations are kept in a separate configuration file for easy reproduction. In the case of feature extraction, configurations include image preprocessing (scaling, colour correction, segmentation), features to be extracted, data format, and a classification hierarchy definition for generating training data for different neural networks.
 
-As part of the feature extraction workflow, each image is first scaled down if the image exceeds a predefined maximum dimension. This is followed by foreground segmentation, where the background pixels are removed, ideally keeping the pixels that make up the flower. Foreground segmentation is done using the GrabCut segmentation algorithm \citep{Rother2004}, which uses an iterative approach. The region of interest (ROI) for the first iteration is set to the entire image and is shrank a fixed number of pixels to get a margin around the ROI containing definite background pixels. Subsequent iterations further classify pixels inside the ROI as foreground/background until the maximum number of iterations is reached. Contours are then obtained from the resulting binary mask. If multiple contours are found, only the largest contour is used to select the foreground pixels for downstream feature extraction. See figure \ref{fig:grabcut-output} for an example segmentation output.
+As part of the feature extraction workflow, each image is first scaled down if the image exceeds a predefined maximum dimension. This is followed by foreground segmentation, where the background pixels are removed, ideally keeping the pixels that make up the flower. Foreground segmentation is done using the GrabCut segmentation algorithm \citep{Rother2004}, which uses an iterative approach. The region of interest (ROI) for the first iteration is set to the entire image and is shrank a fixed number of pixels to get a margin around the ROI containing obvious background pixels (figure \ref{fig:grabcut-output}). This means that the the flower must be somewhere in the centre of the photo for this to work. Subsequent iterations further classify pixels inside the ROI as foreground/background until the maximum number of iterations is reached. Contours are then obtained from the resulting binary mask. If multiple contours are found, only the largest contour is used to select the foreground pixels for downstream feature extraction. See figure \ref{fig:grabcut-output} for an example segmentation output.
 
-\begin{figure*}[h]
+\begin{figure*}[t]
     \centering
     \minipage{\textwidth}
         \includegraphics[width=0.5\linewidth]{grabcut_output_roi}
@@ -174,7 +174,7 @@ As part of the feature extraction workflow, each image is first scaled down if t
     \label{fig:grabcut-output}
 \end{figure*}
 
-BGR colour data were extracted and used as features for training the neural networks. This was done by calculating the up-right bounding square for the main contour, dividing the square into $N$ equal horizontal and vertical sections (bins), and calculating the mean blue, green, and red colour intensity for each bin (figure~\ref{fig:bgr-means-sections}). A histogram of the mean BGR colour intensities  shows that this basic feature captures some information about flower shape as well (figure~\ref{fig:bgr-means-plots}).
+BGR colour data were extracted and used as features for training the neural networks. This was done by calculating the up-right bounding square for the main contour, dividing the square into $N$ equal horizontal and vertical sections (bins), and calculating the mean blue, green, and red colour intensity for each bin (figure~\ref{fig:bgr-means-sections}). A plot of the mean BGR colour intensities  shows that this feature captures some information about flower shape as well (figure~\ref{fig:bgr-means-plots}).
 
 \begin{figure}[h]
     \centering
@@ -183,7 +183,7 @@ BGR colour data were extracted and used as features for training the neural netw
     \label{fig:bgr-means-sections}
 \end{figure}
 
-\begin{figure*}[h]
+\begin{figure*}[t]
     \centering
     \includegraphics[width=\textwidth]{bgr_means_plots}
     \caption{Plots of the mean BGR colour intensities for an image of \textit{P. druryi}. The plots display the mean intensities for the horizontal and vertical bins respectively.}
@@ -192,7 +192,7 @@ BGR colour data were extracted and used as features for training the neural netw
 
 \subsection{Neural network training}
 
-Several artificial neural network training routines were developed and released as a separate Python package called NBClassify (\url{https://github.com/naturalis/nbclassify/nbclassify}).
+A custom Python script with a command-line interface was used for generating training data and training the neural networks for a given classification hierarchy. The classification hierarchy is defined in a configurations file, and is defined as a list of levels which tells the script the path to follow during training and classification (i.e. $genus \rightarrow section \rightarrow species$). Different features and training parameters can be set at each level in the classification hierarchy, which the script then uses to generate training data and train the neural networks for hierarchical classification.
 
 \subsection{Cross-validation}
 
