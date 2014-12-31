@@ -160,20 +160,37 @@ A collection of reference photos was compiled by searching the internet for imag
 
 \subsection{Image feature extraction}
 
-Several feature extraction and artificial neural network training routines were implemented and released as a set of Python scripts (\url{https://github.com/naturalis/nbclassify}). The scripts implement ImgPheno (\url{https://github.com/naturalis/imgpheno}), a collection of several image feature extraction methods. They make use of OpenCV \citep{Pulli2012} for computer vision functionality and NumPy \citep{VanderWalt2011} for array and matrix manipulation functionalities. Feature extraction was automated with a Python script, \texttt{nbc-trainer}, that is executed from the command-line. In addition to the command-line options, detailed configurations are kept in a separate configuration file, which eases reproduction. In the case of feature extraction, configurations include image preprocessing (scaling, colour correction, segmentation), features to be extracted with optional parameters, data format, and defining a classification hierarchy for generating training data for different neural networks.
+Several feature extraction and neural network training routines were implemented and released as a set of Python scripts (\url{https://github.com/naturalis/nbclassify}). The scripts implement a separate Python package called ImgPheno (\url{https://github.com/naturalis/imgpheno}), which is a collection of several image feature extraction methods. They make use of OpenCV \citep{Pulli2012} for computer vision functionality and NumPy \citep{VanderWalt2011} for array and matrix manipulation functionalities. Feature extraction was automated with a Python script that is executed from the command-line. Configurations are kept in a separate configuration file for easy reproduction. In the case of feature extraction, configurations include image preprocessing (scaling, colour correction, segmentation), features to be extracted, data format, and a classification hierarchy definition for generating training data for different neural networks.
 
-As part of the feature extraction workflow, each image is first scaled down if the image exceeds a predefined maximum dimension. The region of interest of the image, in this case the outline of the flower, is then obtained with the GrabCut segmentation algorithm \citep{Rother2004}. For the GrabCut algorithm, an initial region of interest must first be defined in the image, wherein the foreground object (i.e. the flower) must lie. Subsequent segmentation rounds further label pixels within this region as foreground or background. The initial region of interest is set to the entire image but with a small margin from the image borders. Once the foreground is segmented, only that foreground region is used for feature extraction (figure \ref{fig:grabcut-output}).
+As part of the feature extraction workflow, each image is first scaled down if the image exceeds a predefined maximum dimension. This is followed by foreground segmentation, where the background pixels are removed, ideally keeping the pixels that make up the flower. Foreground segmentation is done using the GrabCut segmentation algorithm \citep{Rother2004}, which uses an iterative approach. The region of interest (ROI) for the first iteration is set to the entire image and is shrank a fixed number of pixels to get a margin around the ROI containing definite background pixels. Subsequent iterations further classify pixels inside the ROI as foreground/background until the maximum number of iterations is reached. Contours are then obtained from the resulting binary mask. If multiple contours are found, only the largest contour is used to select the foreground pixels for downstream feature extraction. See figure \ref{fig:grabcut-output} for an example segmentation output.
 
 \begin{figure*}[h]
     \centering
-    \includegraphics[width=\textwidth]{grabcut_output_with_roi}
+    \minipage{\textwidth}
+        \includegraphics[width=0.5\linewidth]{grabcut_output_roi}
+        \includegraphics[width=0.5\linewidth]{grabcut_output}
+    \endminipage
     \caption{Foreground segmentation with the GrabCut algorithm. The image on the left displays how the initial region of interest is set during automated feature extraction. Photo of \textit{Paphiopedilum druryi} by Peter Tremain.}
     \label{fig:grabcut-output}
 \end{figure*}
 
-The \verb/color_bgr_means/ method extracts the BGR colour intensities from a region of interest in an image. This feature has a parameter, \verb/bins/, which is used to set the number of horizontal and vertical sections in which to divide the image. The method returns for each section the mean intensity for each of the components of the BGR colour space (blue, green, and red) (figure~\ref{fig:bgr-means-plots}).
+BGR colour data were extracted and used as features for training the neural networks. This was done by calculating the up-right bounding square for the main contour, dividing the square into $N$ equal horizontal and vertical sections (bins), and calculating the mean blue, green, and red colour intensity for each bin (figure~\ref{fig:bgr-means-sections}). A histogram of the mean BGR colour intensities  shows that this basic feature captures some information about flower shape as well (figure~\ref{fig:bgr-means-plots}).
 
-\subsection{Training}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{bgr_means_sections}
+    \caption{The first horizontal and vertical bin ($N~=~20$) is highlighted in a foreground segmented image of \textit{P.~druryi}.}
+    \label{fig:bgr-means-sections}
+\end{figure}
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=\textwidth]{bgr_means_plots}
+    \caption{Plots of the mean BGR colour intensities for an image of \textit{P. druryi}. The plots display the mean intensities for the horizontal and vertical bins respectively.}
+    \label{fig:bgr-means-plots}
+\end{figure*}
+
+\subsection{Neural network training}
 
 Several artificial neural network training routines were developed and released as a separate Python package called NBClassify (\url{https://github.com/naturalis/nbclassify/nbclassify}).
 
@@ -207,13 +224,6 @@ In total {\PhotoCount} photos for {\SpeciesCount} species were collected (table~
 \subsection{Image feature extraction}
 
 The \verb/color_bgr_means/ method from ImgPheno extracts the BGR colour intensities from a region of interest in an image. This feature has a parameter, \verb/bins/, which is used to set the number of horizontal and vertical sections in which to divide the image. The method returns for each section the mean intensity for each of the components of the BGR colour space (blue, green, and red) (figure~\ref{fig:bgr-means-plots}).
-
-\begin{figure*}[t]
-    \centering
-    \includegraphics[width=\textwidth]{bgr_means_plots}
-    \caption{Plots of the mean BGR colour intensities for an image of \textit{P. druryi}. The plots display the mean intensities for the horizontal and vertical bins respectively.}
-    \label{fig:bgr-means-plots}
-\end{figure*}
 
 \subsection{Cross-validation}
 

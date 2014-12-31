@@ -24,7 +24,9 @@ report.pdf: db-stats.inc table-taxa.inc table-taxa-summary.inc \
 			images/Paphiopedilum.section_pca_plot.pdf \
 			images/Paphiopedilum.Parvisepalum.species_pca_plot.pdf \
 			images/meta_database_diagram.pdf \
-			images/grabcut_output_with_roi.png
+			images/grabcut_output.png \
+			images/grabcut_output_roi.png \
+			images/bgr_means_sections.png
 
 db-stats.inc: data/meta.db
 	python scripts/stats-tex.py $< db_stats > $@
@@ -39,7 +41,7 @@ images/bgr_means_plots.pdf: data/bgr-means.tsv
 	Rscript scripts/make-plots.r $< $@
 
 data/bgr-means.tsv: images/grabcut_output.png
-	python scripts/bgr-means.py $< > $@
+	python scripts/bgr-means.py tsv $< > $@
 
 images/meta_database_diagram.pdf: data/meta.db
 	java -classpath schemacrawler/lib/*:. schemacrawler.tools.sqlite.Main \
@@ -48,10 +50,13 @@ images/meta_database_diagram.pdf: data/meta.db
 	echo Database diagram is in $@
 
 images/grabcut_output.png: images/P_druryi.jpg
-	python scripts/grabcut.py -i $< -o $@
+	python scripts/grabcut.py -i $< -o $@ --margin 5
 
-images/grabcut_output_with_roi.png: images/P_druryi.jpg
-	python scripts/grabcut.py -i $< -o $@ --roi
+images/grabcut_output_roi.png: images/P_druryi.jpg
+	python scripts/grabcut.py -i $< -o $@ --margin 5 --roi
+
+images/bgr_means_sections.png: images/P_druryi.jpg
+	python scripts/bgr-means.py draw -o $@ $<
 
 clean:
 	@rm -f $(OUTDIR)/*.aux  $(OUTDIR)/*.log $(OUTDIR)/*.out
