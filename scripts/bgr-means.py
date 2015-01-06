@@ -79,10 +79,10 @@ def print_tsv(img, contour, bins):
 
 def draw_bins(img, out, contour, bins):
     """Print data in TSV format."""
-    draw_sections(img, contour, bins)
+    draw_sections(img, contour, bins, filter_=[2])
     cv2.imwrite(out, img)
 
-def draw_sections(img, contour, bins):
+def draw_sections(img, contour, bins, filter_=None):
     """Draw bins on the image."""
     props = ft.contour_properties([contour], 'BoundingRect')
     box = props[0]['BoundingRect']
@@ -96,7 +96,10 @@ def draw_sections(img, contour, bins):
     x_start = centroid[0] - (longest / 2)
     y_start = centroid[1] - (longest / 2)
 
-    for i in range(1):
+    for i in range(bins):
+        if filter_ and i not in filter_:
+            continue
+
         x = (incr * i) + x_start
         y = (incr * i) + y_start
 
