@@ -14,7 +14,7 @@ plot.bgr.means <- function(bgr_means_tsv) {
     #matplot(hor, type=c("b"), pch=21, lwd=2, col=bgr, bg=bgr, xlab="Horizontal bin", ylab="Mean Colour Intensity", ylim=c(0,255))
     #matplot(ver, type=c("b"), pch=21, lwd=2, col=bgr, bg=bgr, xlab="Vertical bin", ylab="Mean Colour Intensity", ylim=c(0,255))
     barplot(t(as.matrix(hor)), pch=21, lwd=2, col=bgr, bg=bgr, xlab="Horizontal bin", ylab="Mean Colour Intensity", ylim=c(0,255), cex.axis=1.2, cex.lab=1.2, beside=TRUE)
-    barplot(t(as.matrix(ver)), pch=21, lwd=2, col=bgr, bg=bgr, xlab="Horizontal bin", ylab="Mean Colour Intensity", ylim=c(0,255), cex.axis=1.2, cex.lab=1.2, beside=TRUE)
+    barplot(t(as.matrix(ver)), pch=21, lwd=2, col=bgr, bg=bgr, xlab="Vertical bin", ylab="Mean Colour Intensity", ylim=c(0,255), cex.axis=1.2, cex.lab=1.2, beside=TRUE)
 }
 
 plot.pca.genus <- function(data_tsv) {
@@ -62,15 +62,15 @@ main <- function(args) {
 		pdf(file.out, width=7, height=7)
 		plot.pca.genus(file.in)
 		dev.off()
-	} else if (grepl("Cypripedium\\.section_pca_plot\\.pdf", file.out)) {
+	} else if (grepl("Cypripedium_section_pca_plot\\.pdf", file.out)) {
 		pdf(file.out, width=7, height=7)
 		plot.pca.Cypripedium.section(file.in)
 		dev.off()
-	} else if (grepl("Paphiopedilum\\.section_pca_plot\\.pdf", file.out)) {
+	} else if (grepl("Paphiopedilum_section_pca_plot\\.pdf", file.out)) {
 		pdf(file.out, width=7, height=7)
 		plot.pca.Paphiopedilum.section(file.in)
 		dev.off()
-	} else if (grepl("Paphiopedilum\\.Parvisepalum\\.species_pca_plot\\.pdf", file.out)) {
+	} else if (grepl("Paphiopedilum_Parvisepalum_species_pca_plot\\.pdf", file.out)) {
 		pdf(file.out, width=7, height=7)
 		plot.pca.Paphiopedilum.Parvisepalum.species(file.in)
 		dev.off()

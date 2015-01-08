@@ -20,9 +20,9 @@ all: report.pdf
 
 report.pdf: db-stats.inc table-taxa.inc table-taxa-summary.inc \
 			images/bgr_means_plots.pdf images/genus_pca_plot.pdf \
-			images/Cypripedium.section_pca_plot.pdf \
-			images/Paphiopedilum.section_pca_plot.pdf \
-			images/Paphiopedilum.Parvisepalum.species_pca_plot.pdf \
+			images/Cypripedium_section_pca_plot.pdf \
+			images/Paphiopedilum_section_pca_plot.pdf \
+			images/Paphiopedilum_Parvisepalum_species_pca_plot.pdf \
 			images/meta_database_diagram.pdf \
 			images/grabcut_output.png \
 			images/grabcut_output_roi.png \
@@ -59,5 +59,6 @@ images/bgr_means_sections.png: images/P_druryi.jpg
 	python scripts/bgr-means.py draw -o $@ $<
 
 clean:
-	@rm -f $(OUTDIR)/*.aux  $(OUTDIR)/*.log $(OUTDIR)/*.out
+	@rm -f $(OUTDIR)/*.aux  $(OUTDIR)/*.log $(OUTDIR)/*.out $(OUTDIR)/*.bbl \
+	$(OUTDIR)/*.blg $(OUTDIR)/*.spl
 .PHONY: clean

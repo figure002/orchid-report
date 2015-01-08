@@ -213,7 +213,7 @@
 \begin{abstractbox}
 
 \begin{abstract}
-A generic hierarchical identification system was developed for the automated identification of species by image recognition. The effectiveness of this system was assessed using photographs of orchids of the subfamily Cypripedioideae. Colour and shape features were extracted from single flower photos of {\SpeciesCount} orchid species. Generic image preprocessing, segmentation, and feature extraction algorithms were implemented to obtain morphometric data for the different orchid species. The identification system uses a hierarchy of artificial neural networks for pattern recognition and automated classification. The neural network hierarchy mirrors the taxonomic hierarchy of the Cypripedioideae, such that user-submitted photos could be assigned a genus, section, and species classification. The ability of the identification system to correctly identify user-submitted photos varied depending on the photo quality, the number of species included for training, and the desired taxonomic level for identification. High quality photos were scarce for some taxa and were under-represented in the training set, resulting in imbalanced network training. The simple colour features used for training were not sufficient to reliably identify photos to the correct section and species, and more specialised feature extraction algorithms need to be developed to improve accuracy.
+A generic hierarchical identification system was developed for the automated identification of species by image recognition. The effectiveness of this system was assessed using photographs of orchids of the subfamily Cypripedioideae. Colour and shape features were extracted from single flower photos of {\SpeciesCount} orchid species. Generic image preprocessing, segmentation, and feature extraction algorithms were implemented to obtain morphometric data for the different orchid species. The identification system uses a hierarchy of artificial neural networks for pattern recognition and automated classification. The neural network hierarchy mirrors the taxonomic hierarchy of the Cypripedioideae, such that user-submitted photos could be assigned a genus, section, and species classification. The ability of the identification system to correctly identify user-submitted photos varied depending on the photo quality, the number of species included for training, and the desired taxonomic level for identification. High quality photos were scarce for some taxa and were under-represented in the training set, resulting in imbalanced network training. The simple colour features used for training were not sufficient to reliably identify photos to the correct section and species, and more specialised feature extraction algorithms need to be developed to improve accuracy. The outcomes of this project include an open source library of feature extraction libraries called ImgPheno, a collection of scripts for neural network training called NBClassify, and a web-interface for NBClassify called OrchiD for identification of user-submitted images.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -277,6 +277,8 @@ Correct taxonomic identification of life on earth is for different reasons of gr
 \section{Materials and methods}
 \label{sect:methods}
 
+% Used social media (crowd sourcing) for the collection of images.
+
 \subsection{Reference photo collection}
 
 A collection of reference photos was compiled by searching the internet for images, mostly through Google Image searches. The correct genus, section, and species for each image was verified by specialists and referenced to the literature \cite{Cribb1998, Pridgeon1999, Frosch2012} and phylogenetic reconstructions based on molecular analyses \cite{Li2011, Chochai2012}. Every photo was subsequently uploaded to an account on the online image hosting service Flickr (\url{https://www.flickr.com}). On Flickr, each image was annotated with standardized tags in the formats \texttt{genus:name}, \texttt{section:name}, and \texttt{species:name}. A custom Python script utilizing the Flickr API was used to download the entire image collection with metadata from the Flickr account to a local computer, where images are stored in a directory hierarchy and image annotations are stored in a database (\ref{sect:meta-database}).
@@ -290,8 +292,8 @@ As part of the feature extraction workflow, each image is first scaled down if t
 \begin{figure*}[t]
     \centering
     \minipage{\textwidth}
-        \includegraphics[width=0.48\linewidth]{grabcut_output_roi}
-        \includegraphics[width=0.48\linewidth]{grabcut_output}
+        \includegraphics[width=0.48\linewidth]{grabcut_output_roi.png}
+        \includegraphics[width=0.48\linewidth]{grabcut_output.png}
     \endminipage
     \caption{Foreground segmentation with the GrabCut algorithm. The image on the left displays how the initial region of interest is set during automated feature extraction. Photo of \textit{Paphiopedilum druryi} by Peter Tremain.}
     \label{fig:grabcut-output}
@@ -301,14 +303,14 @@ BGR colour data were extracted and used as features for training the neural netw
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.46\textwidth]{bgr_means_sections}
+    \includegraphics[width=0.46\textwidth]{bgr_means_sections.png}
     \caption{The second horizontal and vertical bin ($N~=~20$) is highlighted in a foreground segmented image of \textit{P.~druryi}.}
     \label{fig:bgr-means-sections}
 \end{figure}
 
 \begin{figure*}[t]
     \centering
-    \includegraphics[width=\textwidth]{bgr_means_plots}
+    \includegraphics[width=\textwidth]{bgr_means_plots.pdf}
     \caption{Plots of the mean BGR colour intensities for an image of \textit{P. druryi}. The plots display the mean intensities for the horizontal and vertical bins respectively.}
     \label{fig:bgr-means-plots}
 \end{figure*}
@@ -447,7 +449,7 @@ As opposed to simply using overall colour data as described in this study, image
 
 \begin{figure*}[!h]
     \centering
-    \includegraphics[width=\textwidth]{meta_database_diagram}
+    \includegraphics[width=\textwidth]{meta_database_diagram.pdf}
     \caption{Diagram of the metadata database used for storing taxonomic information for a collection of reference photos.}
     \label{fig:meta-database}
 \end{figure*}
@@ -483,13 +485,13 @@ As opposed to simply using overall colour data as described in this study, image
 
 \begin{figure}[!h]
     \minipage{\textwidth}
-        \includegraphics[width=0.5\linewidth]{genus_pca_plot}
-        \includegraphics[width=0.5\linewidth]{{{Cypripedium.section_pca_plot}}}
+        \includegraphics[width=0.5\linewidth]{genus_pca_plot.pdf}
+        \includegraphics[width=0.5\linewidth]{Cypripedium_section_pca_plot.pdf}
     \endminipage
     \par\vfill
     \minipage{\textwidth}
-        \includegraphics[width=0.5\linewidth]{{{Paphiopedilum.section_pca_plot}}}
-        \includegraphics[width=0.5\linewidth]{{{Paphiopedilum.Parvisepalum.species_pca_plot}}}
+        \includegraphics[width=0.5\linewidth]{Paphiopedilum_section_pca_plot.pdf}
+        \includegraphics[width=0.5\linewidth]{Paphiopedilum_Parvisepalum_species_pca_plot.pdf}
     \endminipage
     \caption{Scatter plots for the principal components analysis results. PCA was conducted on training data for genus classification, \textit{Cypripedium} section classification, \textit{Paphiopedilum} section classification, and \textit{Paphiopedilum} section \textit{Parvisepalum} species classification. For all plots the first principal component (PC1) was plotted against the second (PC2).}
     \label{fig:pca-plots}
