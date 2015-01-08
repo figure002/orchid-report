@@ -59,5 +59,6 @@ images/bgr_means_sections.png: images/P_druryi.jpg
 	python scripts/bgr-means.py draw -o $@ $<
 
 clean:
-	@rm -f $(OUTDIR)/*.aux  $(OUTDIR)/*.log $(OUTDIR)/*.out
+	@rm -f $(OUTDIR)/*.aux  $(OUTDIR)/*.log $(OUTDIR)/*.out $(OUTDIR)/*.bbl \
+	$(OUTDIR)/*.blg $(OUTDIR)/*.spl
 .PHONY: clean
