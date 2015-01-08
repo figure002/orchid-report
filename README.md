@@ -5,6 +5,8 @@ identification project report.
 
 ## Requirements
 
+* GNU Make
+* TeX Live
 * R
 	* GPArotation
 	* psych
