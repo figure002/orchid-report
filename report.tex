@@ -162,8 +162,8 @@ As part of the feature extraction workflow, each image is first scaled down if t
 \begin{figure*}[t]
     \centering
     \minipage{\textwidth}
-        \includegraphics[width=0.495\linewidth]{grabcut_output_roi}
-        \includegraphics[width=0.495\linewidth]{grabcut_output}
+        \includegraphics[width=0.495\linewidth]{grabcut_output_roi.png}
+        \includegraphics[width=0.495\linewidth]{grabcut_output.png}
     \endminipage
     \caption{Foreground segmentation with the GrabCut algorithm. The image on the left displays how the initial region of interest is set during automated feature extraction. Photo of \textit{Paphiopedilum druryi} by Peter Tremain.}
     \label{fig:grabcut-output}
@@ -173,14 +173,14 @@ BGR colour data were extracted and used as features for training the neural netw
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.47\textwidth]{bgr_means_sections}
+    \includegraphics[width=0.47\textwidth]{bgr_means_sections.png}
     \caption{The second horizontal and vertical bin ($N~=~20$) is highlighted in a foreground segmented image of \textit{P.~druryi}.}
     \label{fig:bgr-means-sections}
 \end{figure}
 
 \begin{figure*}[t]
     \centering
-    \includegraphics[width=\textwidth]{bgr_means_plots}
+    \includegraphics[width=\textwidth]{bgr_means_plots.pdf}
     \caption{Plots of the mean BGR colour intensities for an image of \textit{P. druryi}. The plots display the mean intensities for the horizontal and vertical bins respectively.}
     \label{fig:bgr-means-plots}
 \end{figure*}
@@ -301,7 +301,7 @@ As opposed to simply using overall colour data as described in this study, image
 
 \begin{figure*}[!h]
     \centering
-    \includegraphics[width=\textwidth]{meta_database_diagram}
+    \includegraphics[width=\textwidth]{meta_database_diagram.pdf}
     \caption{Diagram of the metadata database used for storing taxonomic information for a collection of reference photos.}
     \label{fig:meta-database}
 \end{figure*}
@@ -337,13 +337,13 @@ As opposed to simply using overall colour data as described in this study, image
 
 \begin{figure}[!h]
     \minipage{\textwidth}
-        \includegraphics[width=0.5\linewidth]{genus_pca_plot}
-        \includegraphics[width=0.5\linewidth]{{{Cypripedium.section_pca_plot}}}
+        \includegraphics[width=0.5\linewidth]{genus_pca_plot.pdf}
+        \includegraphics[width=0.5\linewidth]{Cypripedium_section_pca_plot.pdf}
     \endminipage
     \par\vfill
     \minipage{\textwidth}
-        \includegraphics[width=0.5\linewidth]{{{Paphiopedilum.section_pca_plot}}}
-        \includegraphics[width=0.5\linewidth]{{{Paphiopedilum.Parvisepalum.species_pca_plot}}}
+        \includegraphics[width=0.5\linewidth]{Paphiopedilum_section_pca_plot.pdf}
+        \includegraphics[width=0.5\linewidth]{Paphiopedilum_Parvisepalum_species_pca_plot.pdf}
     \endminipage
     \caption{Scatter plots for the principal components analysis results. PCA was conducted on training data for genus classification, \textit{Cypripedium} section classification, \textit{Paphiopedilum} section classification, and \textit{Paphiopedilum} section \textit{Parvisepalum} species classification. For all plots the first principal component (PC1) was plotted against the second (PC2).}
     \label{fig:pca-plots}

@@ -62,15 +62,15 @@ main <- function(args) {
 		pdf(file.out, width=7, height=7)
 		plot.pca.genus(file.in)
 		dev.off()
-	} else if (grepl("Cypripedium\\.section_pca_plot\\.pdf", file.out)) {
+	} else if (grepl("Cypripedium_section_pca_plot\\.pdf", file.out)) {
 		pdf(file.out, width=7, height=7)
 		plot.pca.Cypripedium.section(file.in)
 		dev.off()
-	} else if (grepl("Paphiopedilum\\.section_pca_plot\\.pdf", file.out)) {
+	} else if (grepl("Paphiopedilum_section_pca_plot\\.pdf", file.out)) {
 		pdf(file.out, width=7, height=7)
 		plot.pca.Paphiopedilum.section(file.in)
 		dev.off()
-	} else if (grepl("Paphiopedilum\\.Parvisepalum\\.species_pca_plot\\.pdf", file.out)) {
+	} else if (grepl("Paphiopedilum_Parvisepalum_species_pca_plot\\.pdf", file.out)) {
 		pdf(file.out, width=7, height=7)
 		plot.pca.Paphiopedilum.Parvisepalum.species(file.in)
 		dev.off()
