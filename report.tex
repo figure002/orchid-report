@@ -25,6 +25,9 @@
 % Extensive support for hypertext.
 \usepackage[hidelinks,colorlinks=true]{hyperref}
 
+% Named references.
+\usepackage{nameref}
+
 % Easy access to the Lorem Ipsum dummy text.
 \usepackage{lipsum}
 
@@ -73,8 +76,8 @@
 % documentclass defaults.
 \hypersetup{
     citecolor=DodgerBlue4,
-    filecolor=DodgerBlue4,
-    linkcolor=DodgerBlue4,
+    filecolor=black,
+    linkcolor=black,
     urlcolor=DodgerBlue4
 }
 
@@ -140,22 +143,28 @@ Cypripedioideae \sep feature extraction \sep identification \sep image analysis
 
 %% main text
 \section{Introduction}
-\label{sect:introduction}
+\label{sec:introduction}
 
-Correct taxonomic identification of life on earth is for different reasons of great importance. Considering the case of the Cypripedioideae, a horticultural popular group of orchids species and from which many species are highly endangered in the wild, correct taxonomic identification is necessary in order to protect them. Expert taxonomic identification is rare and costly, so alternative methods for taxonomic identification that are both cheap and accurate enough would be of great value. Ongoing advances in computer vision and machine learning has lead to the development of numerous semi- and fully automated species identification systems. Such systems have been successful in the identification of plant species \citep{Arinkin2014, Nilsback2008, Sanz2013}, phytoplankton \citep{Boddy1994}, diatom frustules \citep{Kloster2014}, and insects \citep{Weeks1999,Kang2012}, amongst others. Artificial Neural Networks (ANNs) in particular have become an increasingly popular choice in automated image classification systems \citep{Weeks1997}. They provide a powerful tool for pattern recognition and machine learning.
+Correct taxonomic identification of life is for different reasons of great importance. Considering the case of the Cypripedioideae, a horticultural popular group of orchids species and from which many species are highly endangered in the wild, correct taxonomic identification is necessary in order to protect them. Expert taxonomic identification is rare and costly, so alternative methods for taxonomic identification that are both cheap and accurate enough would be of great value. Ongoing advances in computer vision and machine learning has lead to the development of numerous semi- and fully automated species identification systems. Such systems have been successful in the identification of plant species \citep{Arinkin2014, Nilsback2008, Sanz2013}, phytoplankton \citep{Boddy1994}, diatom frustules \citep{Kloster2014}, and insects \citep{Weeks1999,Kang2012}, amongst others. Artificial Neural Networks (ANNs) in particular have become an increasingly popular choice in automated image classification systems \citep{Weeks1997}. They provide a powerful tool for pattern recognition and machine learning.
 
 \section{Materials and methods}
-\label{sect:methods}
+\label{sec:methods}
 
 % Used social media (crowd sourcing) for the collection of images.
 
 \subsection{Reference photo collection}
 
-A collection of reference photos was compiled by searching the internet for images, mostly through Google Image searches. The correct genus, section, and species for each image was verified by specialists and referenced to the literature \citet{Cribb1998, Pridgeon1999, Frosch2012} and phylogenetic reconstructions based on molecular analyses \citep{Li2011, Chochai2012}. Every photo was subsequently uploaded to an account on the online image hosting service Flickr (\url{https://www.flickr.com}). On Flickr, each image was annotated with standardized tags in the formats \texttt{genus:name}, \texttt{section:name}, and \texttt{species:name}. A custom Python script utilizing the Flickr API was used to download the entire image collection with metadata from the Flickr account to a local computer, where images are stored in a directory hierarchy and image annotations are stored in a database (\ref{sect:meta-database}).
+In order to enable orchid identification through artificial neural networks means that neural networks must first be trained with a sufficient amount of photographs. A collection of reference photos was compiled by searching the internet for images, mostly through Google Image searches. Images were obtained from several multimedia resources like Flickr (\url{https://www.flickr.com}) and Wikimedia Commons (\url{http://commons.wikimedia.org}), but also from several orchid related websites (see \nameref{sec:acknowledgements}).
+
+A simple strategy was needed for maintaining this collection of reference images and their classification labels. And ideal solution would be a database where these images are stored along with their meta-data (i.e. taxonomic information required for training the neural networks). Such a database needs to be accessible via an application programming interface (API) which would allow for the implementation of custom image harvesters for easy retrieval of reference images and their meta-data. Secondly, such a database would need to be accessible from the internet so that images and meta-data could be maintained collaboratively via the internet.
+
+The online image hosting service Flickr was ultimately chosen to fulfil this requirement. Every photo was uploaded to an account on Flickr, where each image was annotated with standardized tags in the formats \verb/genus:name/, \verb/section:name/, and \verb/species:name/. The correct genus, section, and species for each image was verified by specialists and referenced to the literature \citet{Cribb1998, Pridgeon1999, Frosch2012} and phylogenetic reconstructions based on molecular analyses \citep{Li2011, Chochai2012}. Since the reference images need to be processed on a local computer, a custom Python script utilising the Flickr API was implemented to mirror the reference images and meta-data on a local hard-drive, where images are stored in a directory hierarchy such that the directory names correspond to the image classes. Another Python script uses the directory hierarchy to create a local meta-data database (\ref{sec:meta-database}) for a reference image set. This local meta-data database makes it possible to query images from the reference set in downstream analyses (e.g. process photos from orchids of the genus \textit{Paphiopedilum}).
 
 \subsection{Image feature extraction}
 
-The decision was made to develop a generic open-source library of feature extraction methods in an attempt to create a centralized collection of the many image feature extraction algorithms developed over the years. A Python package called ImgPheno (\url{https://github.com/naturalis/imgpheno}) was developed as a result, which is a collection of several image feature extraction methods. It is implemented by a collection of proof-of-concept Python scripts (\url{https://github.com/naturalis/nbclassify}) for image feature extraction and neural network training. The source code of the Python packages are released under the MIT license so that anyone can modify and use this work without restriction. The scripts make extensive use of OpenCV \citep{Pulli2012} for computer vision functionality, NumPy \citep{VanderWalt2011} for array manipulation functionality, and of scikit-learn \citep{Pedregosa2011} for data manipulation functionality. The NBClassify package contains a Python script that automates image feature extraction and neural network training. Configurations are kept in a separate configuration file so that neural network training can easily be reproduced. For feature extraction such configurations include image preprocessing (scaling, colour correction, foreground segmentation), features to be extracted, data format, and a classification hierarchy definition for generating training data for training a neural network hierarchy.
+Raw pixel data is usually not appropriate for pattern recognition algorithms, so images need to be summarised to one or more numerical values. These values, or features, describe some aspect of the image content. Many feature extraction algorithms are generic and are not limited to specific image types. Such feature extraction algorithms can applied to entire images or to regions of interest (ROI) in images. Many feature extraction algorithms have been developed and are usually well described in literature. Some have been implemented as separate software libraries for usage in other software. Image recognition software that use some type of pattern recognition usually implement one or more feature extraction algorithms to extract features from images. With so many feature extraction algorithms in the wild it can be a cumbersome task to find the right algorithm for a specific image recognition problem, let alone having to implement such algorithms yourself. Currently no comprehensive open-source library of image feature extraction algorithms exists (to our knowledge), and one of our goals was to develop such a library. The development of a Python package called ImgPheno (\url{https://github.com/naturalis/imgpheno}) initialised and a few feature extraction methods have been implemented.
+
+It is implemented by a collection of proof-of-concept Python scripts (\url{https://github.com/naturalis/nbclassify}) for image feature extraction and neural network training. The source code of the Python packages are released under the MIT license so that anyone can modify and use this work without restriction. The scripts make extensive use of OpenCV \citep{Pulli2012} for computer vision functionality, NumPy \citep{VanderWalt2011} for array manipulation functionality, and of scikit-learn \citep{Pedregosa2011} for data manipulation functionality. The NBClassify package contains a Python script that automates image feature extraction and neural network training. Configurations are kept in a separate configuration file so that neural network training can easily be reproduced. For feature extraction such configurations include image preprocessing (scaling, colour correction, foreground segmentation), features to be extracted, data format, and a classification hierarchy definition for generating training data for training a neural network hierarchy.
 
 As part of the feature extraction workflow, each image is first scaled down if the image exceeds a predefined maximum dimension. This is followed by foreground segmentation, where the background pixels are removed, ideally keeping only the pixels that make up the flower. Foreground segmentation is done using the GrabCut segmentation algorithm \citep{Rother2004}, which uses an iterative approach. The region of interest (ROI) for the first iteration is set to the entire image and is shrank a fixed number of pixels to get a margin around the ROI containing obvious background pixels (figure \ref{fig:grabcut-output}). Images must therefore be reasonably standardized such that the flower is somewhere in the centre of the image and there must also be good contrast between the flower and the background, as to keep segmentation errors to a minimum. Subsequent iterations further classify pixels inside the ROI as foreground or background until the maximum number of iterations is reached. Contours are then obtained from the resulting binary mask. If multiple contours are found, only the largest contour is used to select the foreground pixels for downstream feature extraction.
 
@@ -189,14 +198,16 @@ BGR colour data were extracted and used as features for training the neural netw
 
 Artificial Neural Network (ANN) training was implemented with the Fast Artificial Neural Network Library (FANN) by \citet{Nissen2003}. The same Python script used for generating the training data was used for training the neural networks for a given classification hierarchy. The classification hierarchy is defined in a configurations file and is defined as a list of levels which tells the script the path to follow during training and classification (i.e. $genus \rightarrow section \rightarrow species$). Different features and training parameters can be set at each level in the classification hierarchy, which the script then uses to generate training data and train the neural networks for hierarchical classification.
 
+Most ANN libraries come with many parameters (e.g. training algorithms, activation functions, neural network topology, etc.), and since there is no way of saying which parameters work best with a specific problem, setting parameters becomes a matter of trial-and-error. To overcome this problem, a genetic algorithm was implemented for the training process. For this purpose a framework for evolving optimal neural networks, \verb/AI::FANN::Evolving/ (\url{https://github.com/naturalis/ai-fann-evolving}), was implemented. The library was implemented the training script to integrate the genetic algorithm in hierarchical neural network training.
+
 \subsection{Cross-validation}
 
 Stratified k-folds cross-validation was performed to estimate the accuracy of the classifiers. Genus, section, species combinations were used as the classes for the cross-validations. The number of folds was set to 4 ($k=4$) to include only those taxa for which at least 4 photos were present. Cross-validation was also performed with 10 folds, only including the species represented by at least 10 photos.
 
-Principal components analysis (PCA) was performed on the training data to assess the suitability of the features to identify the photos by genus, section, and species.
+Principal components analysis (PCA) was performed on the training data to assess the suitability of the features to identify the photos by genus, section, and species. PCA with orthogonal rotation (varimax) was conducted on several training training data sets containing -1 to 1 scaled mean colour intensities for the BGR colour space with 20 horizontal and vertical bins, which translates to 120 features. The Kaiser-Meyer-Olkin measure was used to verify the sampling adequacy for the analysis. Bartlett's test of sphericity was used to get indications whether correlations between items were sufficiently large for PCA. The inflexion in scree plots were used to set the number of components to be extracted. PCA was performed on training data for genus classification, section classification within the genus \textit{Paphiopedilum}, and for species classification within the section \textit{Parvisepalum} of genus \textit{Paphiopedilum}. PCA was not performed for the remaining data sets because the number of features often exceeds the sample size.
 
 \section{Results}
-\label{sect:results}
+\label{sec:results}
 
 \subsection{Reference photo collection}
 
@@ -218,7 +229,7 @@ In total {\PhotoCount} photos for {\SpeciesCount} species were collected (table~
 
 \subsection{Image feature extraction}
 
-Several image feature extraction methods were implemented in the ImgPheno library.
+Several image feature extraction methods were implemented in the ImgPheno library. These include a custom algorithm for getting colour and shape properties, as well as methods for obtaining contour properties (e.g. convex area, eccentricity, equivalent diameter, extent, orientation, perimeter, solidity), and some helper functions for visualising data.
 
 \begin{table}[h]\footnotesize
     \caption{Selection of ImgPheno methods.}
@@ -256,12 +267,12 @@ Stratified k-folds cross-validation was performed to estimate the accuracy of th
     \label{tbl:x-validation-results}
 \end{table}
 
-Principal components analysis (PCA) with orthogonal rotation (varimax) was conducted on training training data for genus classification containing -1 to 1 scaled mean colour intensities for the BGR colour space with 20 horizontal and vertical bins, which translates to 120 features. The Kaiser-Meyer-Olkin measure verified the sampling adequacy for the analysis with an overall Measure of Sampling Adequacy (MSA) of 0.92, and all MSA values for individual items were >0.76, which is well above the acceptable limit of 0.5. Bartlett's test of sphericity $\chi^2 (7140) = 452642$, $p = 0$, indicated that correlations between items were sufficiently large for PCA. An initial PCA was run to obtain eigenvalues for each component in the data. The scree plot constructed from the eigenvalues showed inflexion that would justify retaining 3 components (explaining 65\% of the variance). Given the large sample size (N = 1134) and the convergence of the scree plot, 3 components were retained in the final analysis. The same PCA workflow was repeated for training data for section classification within the genus Paphiopedilum, and for species classification within the section Parvisepalum of genus Paphiopedilum. Figure~\ref{fig:pca-plots} shows the scatter plots for the principal components.
+Figure~\ref{fig:pca-plots} shows the scatter plots for the principal components that were performed on a subset of the training data. The low classification accuracies described in table \ref{tbl:x-validation-results} may be attributed to the poor discrimination ability of the colour based feature. Out of the four plots, only the plot for species classification within the section \textit{Parvisepalum} of genus \textit{Paphiopedilum} showed some clear clusters.
 
 \section{Conclusions and discussion}
-\label{sect:conclusion}
+\label{sec:conclusion}
 
-In an effort the normalize images prior to feature extraction, some colour image enhancement methods developed by \citet{Naik2003} were implemented. Most images used were already of good quality, and performing hue-preserving linear transformation with maximum contrast often did not result in an enhanced image, and thus colour enhancement using this method did not result in improved identification accuracy. Several feature extraction method were implemented in the ImgPheno package, including methods for obtaining image moments based shape characteristics, methods for getting contour outline characteristics (e.g. convex area, eccentricity, equivalent diameter, extent, orientation, perimeter, solidity), specialised shape description methods, and methods for obtaining colour data. This study builds on a simple features extraction method for obtaining colour data, \verb/color_bgr_means/.
+In an effort the normalize images prior to feature extraction, some colour image enhancement methods developed by \citet{Naik2003} were implemented. Most images used were already of good quality, and performing hue-preserving linear transformation with maximum contrast often did not result in an enhanced image, and thus colour enhancement using this method did not result in improved identification accuracy. Several feature extraction method were implemented in the ImgPheno package, including methods for obtaining image moments based shape characteristics, methods for getting contour outline characteristics, specialised shape description methods, and methods for obtaining colour data. This study builds on a simple features extraction method for obtaining colour data, \verb/color_bgr_means/.
 
 As opposed to simply using overall colour data as described in this study, image feature extraction methods should also be developed for extracting specific morphological characters to improve accuracy with hierarchical classification. Developing such specialized features extraction methods is not an easy task however. Many different specialized image feature extraction methods have been developed, and it would be desirable to have these combined in a freely available library, as was attempted in this study. And since multiple morphological characters are usually considered during species identification, multiple features or characters can be represented by the feature data. Identification accuracy can further be improved by means of neural network ensembles, the usage of multiple neural networks to make classifications \citep{Hansen1990}. The identification system presented here does use multiple neural networks for the identification of an image, but these cannot be considered neural networks ensembles because only one neural network is used for each level within the hierarchical classification (i.e. one neural network is used for genus, section, and species separately). The output codes used for training the neural networks as implemented in this study is another aspect that could be improved. The implementation presented here uses the simplest possible output codes for training, but the usage of more sophisticated error codes could improve neural network training and therefore identification accuracy \citep{Dietterich1995}.
 
@@ -269,10 +280,11 @@ As opposed to simply using overall colour data as described in this study, image
 % Better feature extraction methods.
 
 \section*{Acknowledgements}
+\label{sec:acknowledgements}
 
 % De namen van alle fotografen in de format J.H. Simpson.
 
-\lipsum[1]
+This research was made possible by the xxx grant. We are thankful to the following photographers and institutions for allowing us to use their photographs for this research: Alpine-Garden.com, Clark Riley, Crustacare, Dalton Holland Baptista, Daniel Winkler, Danuta Panczyk, David Llewelyn, Dot Potter Barnett, Eleanor S. Saulys (Connecticut Orchid Society), Eric Hunt, Eric Hunt, Fren Mah, GoreOrchids.com, Greentours, Holger Perner, J.J. Harrison, Jason Chang, Jean Claessens, John Marcotte, Joseph W. Dougherty, Karma Forester, Markus Bürki (Botanischer Garten Bern), Martin Günther, Mauro Rosim, Mihai Costea, Nile and Lois Dusdieker, Orchi, Patrick Mannens, Peter Tremain, Philipp J. Cribb and the Swiss Orchid Foundation, Pieter C. Brouwer, Pilar Quintana, Ray Barkalow (First Rays Orchids), Rene Klinge, Rick H., Richard Labbe (Planteck), Roberto Takase, Rogier van Vugt, Ron Parsons, Ross Hella, Vermont Ladyslipper Company, Yijia Wang, GoreOrchids.com, and Orchids.com.
 
 %% If you have bibdatabase file and want bibtex to generate the
 %% bibitems, please use
@@ -297,7 +309,7 @@ As opposed to simply using overall colour data as described in this study, image
 \onecolumn
 
 \section{Metadata database}
-\label{sect:meta-database}
+\label{sec:meta-database}
 
 \begin{figure*}[!h]
     \centering
@@ -307,9 +319,9 @@ As opposed to simply using overall colour data as described in this study, image
 \end{figure*}
 
 \section{Reference photo collection}
-\label{sect:reference-photo-collection}
+\label{sec:reference-photo-collection}
 
-\begin{footnotesize}
+\begin{scriptsize}
 \begin{longtable}{llllll}
     \caption{Taxa represented by the reference photo collection and the number of photos for each species.}
     \label{tbl:taxa-stats}
@@ -318,8 +330,8 @@ As opposed to simply using overall colour data as described in this study, image
         \\\textbf{Taxa} & \textbf{Photos} \\
         \midrule
     \endhead
-        %\midrule
-        \caption*{\footnotesize\textit{(continued on next page)}}
+        \midrule
+        \caption*{\scriptsize\textit{(continued on next page)}}
     \endfoot
         \bottomrule
     \endlastfoot
@@ -329,11 +341,11 @@ As opposed to simply using overall colour data as described in this study, image
     \midrule
     \input{table-taxa.inc}
 \end{longtable}
-\end{footnotesize}
+\end{scriptsize}
 
 \clearpage
 \section{Scatter plots for principal components analyses}
-\label{sect:pca-plots}
+\label{sec:pca-plots}
 
 \begin{figure}[!h]
     \minipage{\textwidth}
