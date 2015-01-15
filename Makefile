@@ -1,16 +1,30 @@
 # See: http://amath.colorado.edu/documentation/LaTeX/reference/faq/bibstyles.html
 
 BIBTEX=bibtex
-OUTDIR=build
 TEX2PDF=pdflatex
-TEX2PDF_OPTS=-file-line-error -shell-escape -output-directory $(OUTDIR)
+TEX2PDF_OPTS=-file-line-error
 
-%.pdf: %.tex $(OUTDIR)/%.aux
-	$(BIBTEX) $(OUTDIR)/$*.aux
+# Convert LaTeX to PDF.
+%.pdf: %.tex %.aux %.bbl
 	$(TEX2PDF) $(TEX2PDF_OPTS) $<
 	$(TEX2PDF) $(TEX2PDF_OPTS) $<
 
-$(OUTDIR)/%.aux: %.tex
+# Convert LaTeX to RTF. Requires latex2rtf.
+%.rtf: %.tex %.aux %.bbl
+	latex2rtf -a $*.aux -b $*.bbl -o $@ $<
+
+# Convert HTML to ODT.
+%.odt: %.html
+	libreoffice --headless --convert-to odt $<
+
+# Convert LaTeX to HTML. Requires tex4ht.
+%.html: %.tex
+	htlatex $<
+
+%.bbl: %.aux %.tex
+	$(BIBTEX) $<
+
+%.aux: %.tex
 	$(TEX2PDF) $(TEX2PDF_OPTS) $<
 
 images/%_pca_plot.pdf: data/%.tsv
@@ -58,7 +72,7 @@ images/grabcut_output_roi.png: images/P_druryi.jpg
 images/bgr_means_sections.png: images/P_druryi.jpg
 	python scripts/bgr-means.py draw -o $@ $<
 
-clean:
-	@rm -f $(OUTDIR)/*.aux  $(OUTDIR)/*.log $(OUTDIR)/*.out $(OUTDIR)/*.bbl \
-	$(OUTDIR)/*.blg $(OUTDIR)/*.spl
-.PHONY: clean
+%.clean:
+	@rm -f $*.aux $*.log $*.out $*.bbl $*.blg $*.spl $*.4ct $*.4tc $*.tmp \
+	$*.xref $*.dvi $*.idv $*.lg
+.PHONY: %.clean
