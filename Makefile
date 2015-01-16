@@ -21,7 +21,7 @@ TEX2PDF_OPTS=-file-line-error
 %.html: %.tex
 	htlatex $<
 
-%.bbl: %.aux %.tex
+%.bbl: %.aux %.tex %.bib
 	$(BIBTEX) $<
 
 %.aux: %.tex
