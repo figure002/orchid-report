@@ -18,12 +18,23 @@ identification project report.
 	* [ImgPheno][1]
 	* [NBClassify][2]
 
+Source distributions of [ImgPheno][1] and [NBClassify][2] can be installed via PIP:
+
+	pip install nbclassify-x.x.x.tar.gz
+	pip install imgpheno-x.x.x.tar.gz
+
 ## Building
 
-Steps to make the PDF report:
+Build the report with the command `make`. The report will be called
+`report.pdf`. Run `make report.clean` to clean up intermediate files after a
+build.
 
-* Create a `build` directory in the project root.
-* Run `make` to compile the PDF report in `build/report.pdf`.
+Other build options:
+
+* `make report.html` builds the report in HTML format. Requires `htlatex`.
+* `make report.rtf` builds the report in RTF format. Requires `latex2rtf`.
+* `make report.odt` builds the report in ODT format. Requires `htlatex` and
+  `libreoffice`.
 
 
 [1]: https://github.com/naturalis/imgpheno
