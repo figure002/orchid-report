@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import re
 import sys
 
 from nbclassify import db
@@ -49,6 +50,12 @@ def main():
         description=""
     )
 
+    parser_db_stats = subparsers.add_parser(
+        "photographers",
+        help="Print a list of the photographers.",
+        description=""
+    )
+
     args = parser.parse_args()
 
     if args.task == 'db_stats':
@@ -57,6 +64,8 @@ def main():
         photo_stats(args.meta, args.col)
     if args.task == 'taxa_summary':
         photo_stats_summary(args.meta)
+    if args.task == 'photographers':
+        print_photographers(args.meta)
 
 def db_stats(db_path):
     with db.session_scope(db_path) as (session, metadata):
@@ -113,6 +122,11 @@ def photo_stats_summary(db_path):
         for genus, section, species, photo in q:
             print "\\textit{{{0}}} & {1} & {2} & {3} \\\\".format(genus, section, species, photo)
 
+def print_photographers(db_path):
+    with db.session_scope(db_path) as (session, metadata):
+        l = list( get_photographers(session, metadata) )
+        print ", ".join(l)
+
 
 def get_photo_count(session, metadata):
     Base = automap_base(metadata=metadata)
@@ -160,6 +174,30 @@ def get_taxa_photo_count_summary(session, metadata):
         order_by('genus')
 
     return q
+
+
+def get_photographers(session, metadata):
+    re_photo_by = re.compile(r'^(?:Photo by|Photo from) (.+)')
+    Base = automap_base(metadata=metadata)
+    Base.prepare()
+    configure_mappers()
+    Photo = Base.classes.photos
+
+    q = session.query(distinct(Photo.description)).\
+            filter(Photo.description != None).\
+            order_by(Photo.description)
+
+    seen = []
+    for (descr,) in q:
+        match = re_photo_by.match( descr.strip() )
+        try:
+            match = match.group(1)
+        except:
+            match = None
+
+        if match and match not in seen:
+            seen.append(match)
+            yield match
 
 if __name__ == "__main__":
     main()
